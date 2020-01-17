@@ -15,3 +15,8 @@ export class LoginFailedAction {
     static type = '[Auth] Login failed';
     constructor ( public user: User) { }
 }
+
+export class LoginFacebookAction{
+    static type = '[Auth] Login with Facebook';
+    constructor ( public code: String) { }
+}

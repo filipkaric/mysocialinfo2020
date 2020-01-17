@@ -1,7 +1,9 @@
-<p>login works!</p>
-<p>{{ loggedUser.firstname }}</p>
-<br>
-<mat-card>
+<!-- <p>{{ loggedUser.firstname }}</p> -->
+<!-- <br> -->
+<mat-card class="example-card">
+    <mat-card-header>
+        <mat-card-title>Пријава</mat-card-title>
+    </mat-card-header>
     <mat-card-content>
         <form [formGroup]="loginForm" (ngSubmit)="login">
             <div class="">
@@ -27,10 +29,10 @@
                 Погрешно корисничко име и/или лозинка
             </span>
         </div>
-        <button mat-flat-button class="mat-primary full-width" [disabled]="loginForm.invalid">
+        <button mat-flat-button class="mat-primary full-width" [disabled]="loginForm.invalid" (click)="login()">
             Пријава
         </button>
         </form>
     </mat-card-content>
 </mat-card>
-<button (click)="login()">Klikni me</button>
+<!-- <button (click)="login()">Klikni me</button> -->

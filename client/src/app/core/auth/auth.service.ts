@@ -20,9 +20,14 @@ export class AuthService {
 
     constructor(private http: HttpClient) { }
 
-    private webApiUrl = `${environment.webApiUrl}login`;
+    private webApiUrl = `${environment.webApiUrl}`;
 
     login(loginData: LoginData): Observable<User> { 
-        return this.http.post<User>(this.webApiUrl, loginData, httpOptions);
+        return this.http.post<User>(this.webApiUrl + "login", loginData, httpOptions);
+    }
+
+    facebookLogin(code: String): Observable<User> {
+      debugger
+      return this.http.get<User>(this.webApiUrl + "facebook?code=" + code);
     }
 }

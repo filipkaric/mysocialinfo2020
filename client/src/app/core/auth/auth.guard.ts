@@ -14,7 +14,6 @@ export class AuthGuard implements CanActivate, CanActivateChild {
         next: ActivatedRouteSnapshot,
         state: RouterStateSnapshot
     ): Observable<boolean> | Promise<boolean> | boolean {
-        debugger
         const user = this.store.selectSnapshot(st => st.auth.user);
         if(!user){
             this.router.navigate(['login']);
@@ -27,7 +26,6 @@ export class AuthGuard implements CanActivate, CanActivateChild {
         next: ActivatedRouteSnapshot,
         state: RouterStateSnapshot
     ): Observable<boolean> | Promise<boolean> | boolean {
-        debugger
         return this.canActivate(next, state);
     }
 
