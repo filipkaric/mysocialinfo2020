@@ -37,118 +37,118 @@ export class HomeComponent implements OnInit, OnDestroy {
   showLabels = true;
 
   // data goes here
-public single = [
-  {
-    "name": "China",
-    "value": 2243772
-  },
-  {
-    "name": "USA",
-    "value": 1126000
-  },
-  {
-    "name": "Norway",
-    "value": 296215
-  },
-  {
-    "name": "Japan",
-    "value": 257363
-  },
-  {
-    "name": "Germany",
-    "value": 196750
-  },
-  {
-    "name": "France",
-    "value": 204617
-  }
-];
+  public single = [
+    {
+      "name": "China",
+      "value": 2243772
+    },
+    {
+      "name": "USA",
+      "value": 1126000
+    },
+    {
+      "name": "Norway",
+      "value": 296215
+    },
+    {
+      "name": "Japan",
+      "value": 257363
+    },
+    {
+      "name": "Germany",
+      "value": 196750
+    },
+    {
+      "name": "France",
+      "value": 204617
+    }
+  ];
 
-public multi = [
-  {
-    "name": "China",
-    "series": [
-      {
-        "name": "2018",
-        "value": 2243772
-      },
-      {
-        "name": "2017",
-        "value": 1227770
-      }
-    ]
-  },
+  public multi = [
+    {
+      "name": "China",
+      "series": [
+        {
+          "name": "2018",
+          "value": 2243772
+        },
+        {
+          "name": "2017",
+          "value": 1227770
+        }
+      ]
+    },
 
-  {
-    "name": "USA",
-    "series": [
-      {
-        "name": "2018",
-        "value": 1126000
-      },
-      {
-        "name": "2017",
-        "value": 764666
-      }
-    ]
-  },
+    {
+      "name": "USA",
+      "series": [
+        {
+          "name": "2018",
+          "value": 1126000
+        },
+        {
+          "name": "2017",
+          "value": 764666
+        }
+      ]
+    },
 
-  {
-    "name": "Norway",
-    "series": [
-      {
-        "name": "2018",
-        "value": 296215
-      },
-      {
-        "name": "2017",
-        "value": 209122
-      }
-    ]
-  },
+    {
+      "name": "Norway",
+      "series": [
+        {
+          "name": "2018",
+          "value": 296215
+        },
+        {
+          "name": "2017",
+          "value": 209122
+        }
+      ]
+    },
 
-  {
-    "name": "Japan",
-    "series": [
-      {
-        "name": "2018",
-        "value": 257363
-      },
-      {
-        "name": "2017",
-        "value": 205350
-      }
-    ]
-  },
+    {
+      "name": "Japan",
+      "series": [
+        {
+          "name": "2018",
+          "value": 257363
+        },
+        {
+          "name": "2017",
+          "value": 205350
+        }
+      ]
+    },
 
-  {
-    "name": "Germany",
-    "series": [
-      {
-        "name": "2018",
-        "value": 196750
-      },
-      {
-        "name": "2017",
-        "value": 129246
-      }
-    ]
-  },
+    {
+      "name": "Germany",
+      "series": [
+        {
+          "name": "2018",
+          "value": 196750
+        },
+        {
+          "name": "2017",
+          "value": 129246
+        }
+      ]
+    },
 
-  {
-    "name": "France",
-    "series": [
-      {
-        "name": "2018",
-        "value": 204617
-      },
-      {
-        "name": "2017",
-        "value": 149797
-      }
-    ]
-  }
-];
+    {
+      "name": "France",
+      "series": [
+        {
+          "name": "2018",
+          "value": 204617
+        },
+        {
+          "name": "2017",
+          "value": 149797
+        }
+      ]
+    }
+  ];
 
   //Charts
 
@@ -159,16 +159,20 @@ public multi = [
     private route: ActivatedRoute,
     private store: Store,
     private router: Router
-    ) { }
+  ) { }
 
   ngOnInit() {
-    debugger
     this.routeEventSubscription = this.route.queryParams.subscribe(params => {
+      debugger
       if (params.code != null && params.code !== undefined) {
-        debugger
-        this.router.url;
-        this.code = params['code'];
-        this.store.dispatch(new authActions.LoginFacebookAction(this.code));
+        if (this.router.url.includes("facebook")) {
+          this.code = params['code'];
+          this.store.dispatch(new authActions.LoginFacebookAction(this.code));
+        }
+      }
+      if (this.router.url.includes("twitter")) {
+        this.code = params['oauth_verifier'];
+        this.store.dispatch(new authActions.LoginTwitter(this.code));
       }
     })
   }
@@ -176,6 +180,11 @@ public multi = [
   facebookLogin() {
     window.location.href = environment.facebookLoginUrl;
 
+  }
+
+  twitterLogin() {
+    // window.location.href = 'https://api.twitter.com/oauth/authenticate?oauth_token=O2BdKgAAAAABCJUlAAABb_1eNaE';
+    this.store.dispatch(new authActions.GetTwitterLoginUrlAction);
   }
 
   ngOnDestroy() {

@@ -27,7 +27,14 @@ export class AuthService {
     }
 
     facebookLogin(code: String): Observable<User> {
-      debugger
       return this.http.get<User>(this.webApiUrl + "facebook?code=" + code);
+    }
+
+    getTwitterUrl(): Observable<User> {
+      return this.http.get<User>(this.webApiUrl + "twitter");
+    }
+
+    twitterLogin(verifier: String): Observable<User> {
+      return this.http.get<User>(this.webApiUrl + "twitterLogin?verifier=" + verifier);
     }
 }

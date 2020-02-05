@@ -6,7 +6,9 @@ export const environment = {
   production: false,
   webApiUrl: 'http://localhost:8080/',
   facebookAppId: '490841858175046',
-  facebookLoginUrl: 'https://www.facebook.com/dialog/oauth?client_id=490841858175046&redirect_uri=http%3A%2F%2Flocalhost%3A4200%2Fhome%2F'
+  // facebookLoginUrl: 'https://www.facebook.com/dialog/oauth?client_id=490841858175046&redirect_uri=http%3A%2F%2Flocalhost%3A4200%2Fhome%2F',
+  facebookLoginUrl: 'https://www.facebook.com/dialog/oauth?client_id=490841858175046&scope=instagram_basic&redirect_uri=http%3A%2F%2Flocalhost%3A4200%2Fhome%2Ffacebook%2F',
+  instagramAppId: '181515839736452'
 };
 
 /*

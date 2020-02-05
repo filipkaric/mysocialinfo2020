@@ -1,23 +1,14 @@
 package mysocialinfo.mysocialinfo.controllers;
 
 import mysocialinfo.mysocialinfo.businesslogic.SocialDataBL;
-import mysocialinfo.mysocialinfo.helpers.ParameterStringBuilder;
 import mysocialinfo.mysocialinfo.models.LoginData;
 import mysocialinfo.mysocialinfo.models.User;
 import mysocialinfo.mysocialinfo.repository.UserRepository;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-
-import static mysocialinfo.mysocialinfo.helpers.ParameterStringBuilder.getQueryMap;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -60,7 +51,7 @@ public class LoginController {
     public User LoginToFacebook(ServletRequest request){
         if (!(request instanceof HttpServletRequest))
             return null;
-        return socialDataBL.LoginToFacebook(request);
+        return socialDataBL.FacebookLogin(request);
 //        StringBuffer requestURL = ((HttpServletRequest) request).getRequestURL();
 //        String queryString = ((HttpServletRequest) request).getQueryString();
 //        Map parametri = getQueryMap(queryString);
@@ -105,5 +96,23 @@ public class LoginController {
 //        User user = new User();
 //        user.setEmail(requestURL.append('?').append(queryString).toString());
 //        return user;
+    }
+
+    @RequestMapping("/twitter")
+    public User TwitterLogin() {
+        String fica = socialDataBL.TwitterUrlToken();
+        User user = new User();
+        user.setToken(fica);
+        return user;
+    }
+
+    @RequestMapping("/twitterLogin")
+    public User TwitterLoginStvarno(ServletRequest request){
+        if (!(request instanceof HttpServletRequest))
+            return null;
+        String fica = socialDataBL.LoginTwitter(request);
+        User user = new User();
+        user.setToken(fica);
+        return user;
     }
 }

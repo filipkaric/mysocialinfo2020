@@ -17,15 +17,17 @@ public class User {
     private String firstname;
     private String lastname;
     private String email;
+    private String token;
 
     public User() {
     }
 
-    public User(String name, String firstname, String lastname, String email) {
+    public User(String name, String firstname, String lastname, String email, String token) {
         this.name = name;
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
+        this.token = token;
     }
     public String getName() {
         return name;
@@ -57,6 +59,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     @Override

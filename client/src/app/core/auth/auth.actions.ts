@@ -1,5 +1,6 @@
 import { User } from '../models/user.model';
 import { LoginData } from '../models/login-data.model';
+import { ɵCodegenComponentFactoryResolver } from '@angular/core';
 
 export class LoginUsernamePasswordAction {
     static type = '[Auth] Login by username and password';
@@ -19,4 +20,14 @@ export class LoginFailedAction {
 export class LoginFacebookAction{
     static type = '[Auth] Login with Facebook';
     constructor ( public code: String) { }
+}
+
+export class GetTwitterLoginUrlAction{
+    static type = '[Auth] Get twitter login url';
+    constructor () { }
+}
+
+export class LoginTwitter {
+    static type = '[Auth] Login twitter';
+    constructor( public verifier: String ){} 
 }

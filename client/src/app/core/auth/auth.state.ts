@@ -65,11 +65,35 @@ export class AuthState {
 
     @Action(authActions.LoginFacebookAction)
     loginFacebook(ctx: StateContext<AuthStateModel>, action: authActions.LoginFacebookAction) {
-        debugger
         return this.authService.facebookLogin(action.code).pipe(
             tap((user: User) => {
-                debugger;
                 console.log(user)
+            }),
+            catchError(error => {
+                return ctx.dispatch(new authActions.LoginFailedAction(error))
+            })
+        )
+    }
+
+    @Action(authActions.GetTwitterLoginUrlAction)
+    getTwitterUrl(ctx: StateContext<AuthStateModel>, action: authActions.GetTwitterLoginUrlAction) {
+        return this.authService.getTwitterUrl().pipe(
+            tap((user: User) => {
+                debugger
+                window.location.href = 'https://api.twitter.com/oauth/authenticate?oauth_token=' + user.token;
+            }),
+            catchError(error => {
+                return ctx.dispatch(new authActions.LoginFailedAction(error))
+            })
+        )
+    }
+
+    @Action(authActions.LoginTwitter)
+    loginTwitter(ctx: StateContext<AuthStateModel>, action: authActions.LoginTwitter) {
+        return this.authService.twitterLogin(action.verifier).pipe(
+            tap((user: User) => {
+                debugger
+                
             }),
             catchError(error => {
                 return ctx.dispatch(new authActions.LoginFailedAction(error))
