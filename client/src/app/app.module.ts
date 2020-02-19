@@ -17,6 +17,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AuthGuard } from './core/auth/auth.guard';
 import { HomeComponent } from './core/components/home/home.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
     HttpClientModule,
     ReactiveFormsModule,
     SharedMaterialModule,
+    FlexLayoutModule,
     NgxsModule.forRoot([AuthState], {developmentMode: !environment.production}),
     NgxsStoragePluginModule.forRoot(),
     NgxsLoggerPluginModule.forRoot({logger: console, collapsed: false, disabled: environment.production})

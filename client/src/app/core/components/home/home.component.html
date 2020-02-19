@@ -2,21 +2,18 @@
 <button (click)="facebookLogin()">Facebook login</button>
 <button (click)="twitterLogin()">Twitter login</button>
 <!--The content below is only a placeholder and can be replaced.-->
-<!-- <div style="text-align:center">
+<!-- <div style="text-align:center"> -->
+  <div fxLayout="column">
     <h1 class="card-header bg-info">
       Welcome to {{ title }}!
     </h1>
     <h3 class="text-secondary">
       PEV Selling Countries
     </h3>
-    <div class="row ml-5">
-      <div class="col">
-          <div class="row">
+    <div>
             <h4>
               Vertical Bar Chart
             </h4>
-          </div>
-          <div class="row">
                 <ngx-charts-bar-vertical
                 [view]="view"
                 [scheme]="colorScheme"
@@ -31,15 +28,11 @@
                 [yAxisLabel]="yAxisLabel"
                 (select)="onSelect($event)">
                 </ngx-charts-bar-vertical>
-          </div>
-        </div>
-        <div class="col">
-          <div class="row">
+      </div>
+      <div>
             <h4>
               Vertical Bar Chart Normalized
             </h4>
-          </div>
-          <div class="row">
             <ngx-charts-bar-vertical-normalized
             [view]="view"
             [scheme]="colorScheme"
@@ -54,15 +47,11 @@
             [yAxisLabel]="yAxisLabel"
             (select)="onSelect($event)">
             </ngx-charts-bar-vertical-normalized>
-          </div>
-        </div>
       </div>
-      <div class="row ml-5">
+      <div>
         <h4>
           Stacked Vertical Bar Chart
         </h4>
-      </div>
-      <div class="form-group row ml-5">
         <ngx-charts-bar-vertical-stacked
         [view]="view"
         [scheme]="colorScheme"
@@ -78,5 +67,4 @@
         (select)="onSelect($event)">
         </ngx-charts-bar-vertical-stacked>
       </div>
-  
-  </div> -->
+  </div>

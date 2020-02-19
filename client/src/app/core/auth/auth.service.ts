@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { LoginData } from '../models/login-data.model';
+import { SocialData } from '../models/social-data.model';
 
 const httpOptions = {
     headers: new HttpHeaders({
@@ -26,8 +27,8 @@ export class AuthService {
         return this.http.post<User>(this.webApiUrl + "login", loginData, httpOptions);
     }
 
-    facebookLogin(code: String): Observable<User> {
-      return this.http.get<User>(this.webApiUrl + "facebook?code=" + code);
+    facebookLogin(code: String): Observable<SocialData> {
+      return this.http.get<SocialData>(this.webApiUrl + "facebook?code=" + code);
     }
 
     getTwitterUrl(): Observable<User> {

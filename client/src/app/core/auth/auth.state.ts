@@ -6,17 +6,20 @@ import { catchError, tap } from 'rxjs/operators';
 import { Navigate } from '@ngxs/router-plugin';
 import { Router } from '@angular/router';
 import { NgZone } from '@angular/core';
+import { SocialData } from '../models/social-data.model';
 
 export interface AuthStateModel {
     isAuthenticated: boolean;
     user: User;
+    facebookData: SocialData;
 }
 
 @State<AuthStateModel>({
     name: 'auth',
     defaults: {
         isAuthenticated: false,
-        user: null
+        user: null,
+        facebookData: null
     }
 })
 
@@ -66,8 +69,9 @@ export class AuthState {
     @Action(authActions.LoginFacebookAction)
     loginFacebook(ctx: StateContext<AuthStateModel>, action: authActions.LoginFacebookAction) {
         return this.authService.facebookLogin(action.code).pipe(
-            tap((user: User) => {
-                console.log(user)
+            tap((facebookData: SocialData) => {
+                debugger
+                ctx.patchState({facebookData})
             }),
             catchError(error => {
                 return ctx.dispatch(new authActions.LoginFailedAction(error))

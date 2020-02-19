@@ -2,6 +2,7 @@ package mysocialinfo.mysocialinfo.controllers;
 
 import mysocialinfo.mysocialinfo.businesslogic.SocialDataBL;
 import mysocialinfo.mysocialinfo.models.LoginData;
+import mysocialinfo.mysocialinfo.models.SocialData;
 import mysocialinfo.mysocialinfo.models.User;
 import mysocialinfo.mysocialinfo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,7 @@ public class LoginController {
     }
 
     @RequestMapping("/facebook")
-    public User LoginToFacebook(ServletRequest request){
+    public SocialData LoginToFacebook(ServletRequest request){
         if (!(request instanceof HttpServletRequest))
             return null;
         return socialDataBL.FacebookLogin(request);
