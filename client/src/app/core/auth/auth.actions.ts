@@ -22,6 +22,11 @@ export class LoginFacebookAction{
     constructor ( public code: String) { }
 }
 
+export class LoginYoutubeAction{
+    static type = '[Auth] Login with Youtube';
+    constructor ( public code: String) { }
+}
+
 export class GetTwitterLoginUrlAction{
     static type = '[Auth] Get twitter login url';
     constructor () { }

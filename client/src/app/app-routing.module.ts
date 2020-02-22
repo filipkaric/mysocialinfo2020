@@ -20,6 +20,7 @@ const routes: Routes = [
     children: [
       { path: '',  canActivate: [AuthGuard], component: HomeComponent },
       { path: 'facebook/:code', canActivate: [AuthGuard], component: HomeComponent },
+      { path: 'youtube/:code', canActivate: [AuthGuard], component: HomeComponent },
       { path: 'twitter/:oauth_token&:oauth_verifier', canActivate: [AuthGuard], component: HomeComponent }
     ]
   },

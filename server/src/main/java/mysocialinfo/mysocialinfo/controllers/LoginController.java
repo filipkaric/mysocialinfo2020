@@ -116,4 +116,11 @@ public class LoginController {
         user.setToken(fica);
         return user;
     }
+
+    @RequestMapping("/youtube")
+    public SocialData LoginToYoutube(ServletRequest request){
+        if (!(request instanceof HttpServletRequest))
+            return null;
+        return socialDataBL.YoutubeLogin(request);
+    }
 }

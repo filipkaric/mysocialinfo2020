@@ -8,6 +8,8 @@ export const environment = {
   facebookAppId: '490841858175046',
   // facebookLoginUrl: 'https://www.facebook.com/dialog/oauth?client_id=490841858175046&redirect_uri=http%3A%2F%2Flocalhost%3A4200%2Fhome%2F',
   facebookLoginUrl: 'https://www.facebook.com/dialog/oauth?client_id=490841858175046&scope=instagram_basic&redirect_uri=http%3A%2F%2Flocalhost%3A4200%2Fhome%2Ffacebook%2F',
+  // youtubeLoginUrl: 'https://accounts.google.com/o/oauth2/v2/auth?client_id=911449969420-i76nfkg8ik3v0lf9i20vpvjikpvsoidm.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A4200%2Fhome%2Fyoutube%2F&response_type=code&scope=https://www.googleapis.com/auth/youtube.force-ssl',
+  youtubeLoginUrl: 'https://accounts.google.com/o/oauth2/v2/auth?client_id=911449969420-i76nfkg8ik3v0lf9i20vpvjikpvsoidm.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A4200%2Fhome%2Fyoutube%2F&response_type=code&scope=https://www.googleapis.com/auth/youtube.readonly',
   instagramAppId: '181515839736452'
 };
 

@@ -163,7 +163,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.routeEventSubscription = this.route.queryParams.subscribe(params => {
-      debugger
       if (params.code != null && params.code !== undefined) {
         if (this.router.url.includes("facebook")) {
           this.code = params['code'];
@@ -174,12 +173,19 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.code = params['oauth_verifier'];
         this.store.dispatch(new authActions.LoginTwitter(this.code));
       }
+      if (this.router.url.includes("youtube")) {
+        this.code = params['code'];
+        this.store.dispatch(new authActions.LoginYoutubeAction(this.code));
+      }
     })
   }
 
   facebookLogin() {
     window.location.href = environment.facebookLoginUrl;
+  }
 
+  youtubeLogin() {
+    window.location.href = environment.youtubeLoginUrl;
   }
 
   twitterLogin() {

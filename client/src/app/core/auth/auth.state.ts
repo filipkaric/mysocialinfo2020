@@ -70,7 +70,6 @@ export class AuthState {
     loginFacebook(ctx: StateContext<AuthStateModel>, action: authActions.LoginFacebookAction) {
         return this.authService.facebookLogin(action.code).pipe(
             tap((facebookData: SocialData) => {
-                debugger
                 ctx.patchState({facebookData})
             }),
             catchError(error => {
@@ -83,7 +82,6 @@ export class AuthState {
     getTwitterUrl(ctx: StateContext<AuthStateModel>, action: authActions.GetTwitterLoginUrlAction) {
         return this.authService.getTwitterUrl().pipe(
             tap((user: User) => {
-                debugger
                 window.location.href = 'https://api.twitter.com/oauth/authenticate?oauth_token=' + user.token;
             }),
             catchError(error => {
@@ -96,8 +94,19 @@ export class AuthState {
     loginTwitter(ctx: StateContext<AuthStateModel>, action: authActions.LoginTwitter) {
         return this.authService.twitterLogin(action.verifier).pipe(
             tap((user: User) => {
-                debugger
                 
+            }),
+            catchError(error => {
+                return ctx.dispatch(new authActions.LoginFailedAction(error))
+            })
+        )
+    }
+
+    @Action(authActions.LoginYoutubeAction)
+    loginYoutube(ctx: StateContext<AuthStateModel>, action: authActions.LoginYoutubeAction) {
+        return this.authService.youtubeLogin(action.code).pipe(
+            tap((facebookData: SocialData) => {
+                ctx.patchState({facebookData})
             }),
             catchError(error => {
                 return ctx.dispatch(new authActions.LoginFailedAction(error))

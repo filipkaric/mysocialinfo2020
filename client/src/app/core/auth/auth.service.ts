@@ -38,4 +38,8 @@ export class AuthService {
     twitterLogin(verifier: String): Observable<User> {
       return this.http.get<User>(this.webApiUrl + "twitterLogin?verifier=" + verifier);
     }
+
+    youtubeLogin(code: String): Observable<SocialData> {
+      return this.http.get<SocialData>(this.webApiUrl + "youtube?code=" + code);
+    }
 }
