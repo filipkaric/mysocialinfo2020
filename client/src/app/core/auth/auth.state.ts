@@ -92,7 +92,7 @@ export class AuthState {
 
     @Action(authActions.LoginTwitter)
     loginTwitter(ctx: StateContext<AuthStateModel>, action: authActions.LoginTwitter) {
-        return this.authService.twitterLogin(action.verifier).pipe(
+        return this.authService.twitterLogin(action.verifier, action.token).pipe(
             tap((user: User) => {
                 
             }),

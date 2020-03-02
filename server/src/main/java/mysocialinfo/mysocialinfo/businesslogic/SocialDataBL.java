@@ -1,17 +1,15 @@
 package mysocialinfo.mysocialinfo.businesslogic;
 
+import mysocialinfo.mysocialinfo.helpers.OAuth1AuthorizationHeaderBuilder;
 import mysocialinfo.mysocialinfo.models.SocialData;
-import mysocialinfo.mysocialinfo.models.User;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
@@ -37,103 +35,22 @@ public class SocialDataBL {
     }
 
     public String TwitterUrlToken() {
-        String consumer_key = "cAZvSJcPSJoJFBCylBgCcO3H4";
-        String consumer_secret = "VbHpDOo7L7qMdU5NaaK5LvyxCXcEGPrAzVrpUNtMaFNzfWZUHO";
-        String access_token = "50785844-fhhnRoG7lToqfimj3uY7VuA54jciUx4KA5lLIaX3v";
-        String access_secret= "BixLSqX2N0nvzllKhsNXzsQQ6EANqDt5Yc6GD4QoXVH2s";
-//        String basicAuth = "OAuth oauth_consumer_key=\"cAZvSJcPSJoJFBCylBgCcO3H4\",oauth_token=\"50785844-fhhnRoG7lToqfimj3uY7VuA54jciUx4KA5lLIaX3v\",oauth_signature_method=\"HMAC-SHA1\",oauth_timestamp=\"1580329485\",oauth_nonce=\"avz5NK3soW9\",oauth_version=\"1.0\",oauth_signature=\"8a4Mp%2B86evdRxNrmcaLhjA86x54%3D\"";
-        String basicAuth = "OAuth oauth_consumer_key=\"cAZvSJcPSJoJFBCylBgCcO3H4\",oauth_signature_method=\"HMAC-SHA1\",oauth_timestamp=\"1580848037\",oauth_nonce=\"7pU8zKTM8Qw\",oauth_version=\"1.0\",oauth_signature=\"F9s9RgExHwR1Hv4vPsw9xp9pNTc%3D\"";
-        URL url;
-
         try {
-            url = new URL("https://api.twitter.com/oauth/request_token");
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-
-            con.setRequestMethod("POST");
-            con.setRequestProperty("Content-Type", "application/json");
-            con.setRequestProperty ("oauth_callback", "http%3A%2F%2Flocalhost%3A4200%2Fhome%2Ftwitter%2F");
-            con.setRequestProperty ("Authorization", basicAuth);
-
-            con.setUseCaches(false);
-            con.setDoOutput(true);
-            // Send request
-            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-            wr.close();
-            // Get Response
-            InputStream is = con.getInputStream();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-            StringBuilder response = new StringBuilder(); // or StringBuffer if Java version 5+
-            String line;
-            while ((line = rd.readLine()) != null) {
-                response.append(line);
-                response.append('\r');
-            }
-            rd.close();
-
-            String responseBody = "{" + response.toString() + "}";
-            responseBody = responseBody.replace('=', ':').replace('&',',');
-            JSONObject jsonObject = new JSONObject(responseBody);
-
-            System.out.println(responseBody);
-            String fica = jsonObject.getString("oauth_token");
-            twitterToken = fica;
-            return fica;
-//            JSONObject jsonObject = new JSONObject(responseBody);
-//            facebookAccessToken = jsonObject.getString("access_token");
-        } catch (IOException e) {
+            return requestTwitterToken();
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return "";
     }
 
-    public String LoginTwitter(ServletRequest request) {
-        StringBuffer requestURL = ((HttpServletRequest) request).getRequestURL();
-        String queryString = ((HttpServletRequest) request).getQueryString();
-        Map parametri = getQueryMap(queryString);
-        String code = (String)parametri.get("verifier");
-//        String basicAuth = "OAuth oauth_consumer_key=\"cAZvSJcPSJoJFBCylBgCcO3H4\",oauth_token=\"50785844-fhhnRoG7lToqfimj3uY7VuA54jciUx4KA5lLIaX3v\",oauth_signature_method=\"HMAC-SHA1\",oauth_timestamp=\"1580329485\",oauth_nonce=\"avz5NK3soW9\",oauth_version=\"1.0\",oauth_signature=\"8a4Mp%2B86evdRxNrmcaLhjA86x54%3D\"";
-        String basicAuth = "OAuth oauth_consumer_key=\"cAZvSJcPSJoJFBCylBgCcO3H4\",oauth_token=" + twitterToken + ",oauth_signature_method=\"HMAC-SHA1\",oauth_timestamp=\"1580930206\",oauth_nonce=\"JRckMrFATih\",oauth_version=\"1.0\",oauth_signature=\"zqXAccQY4BSW0EZnF29k9wS9Pcc%3D\"";
-        URL url;
-
+    public SocialData LoginTwitter(ServletRequest request) {
+        SocialData socialData = new SocialData();
         try {
-            url = new URL("https://api.twitter.com/oauth/access_token?oauth_verifier=" + code);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-
-            con.setRequestMethod("POST");
-            con.setRequestProperty("Content-Type", "application/json");
-            con.setRequestProperty ("oauth_verifier", code);
-            con.setRequestProperty ("Authorization", basicAuth);
-
-            con.setUseCaches(false);
-            con.setDoOutput(true);
-            // Send request
-            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-            wr.close();
-            // Get Response
-            InputStream is = con.getInputStream();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-            StringBuilder response = new StringBuilder(); // or StringBuffer if Java version 5+
-            String line;
-            while ((line = rd.readLine()) != null) {
-                response.append(line);
-                response.append('\r');
-            }
-            rd.close();
-
-            String responseBody = "{" + response.toString() + "}";
-            responseBody = responseBody.replace('=', ':').replace('&',',');
-            JSONObject jsonObject = new JSONObject(responseBody);
-
-            System.out.println(responseBody);
-            String oauthToken = jsonObject.getString("oauth_token");
-            twitterToken = oauthToken;
-            return oauthToken;
-//            JSONObject jsonObject = new JSONObject(responseBody);
-//            facebookAccessToken = jsonObject.getString("access_token");
-        } catch (IOException e) {
+            String token = loginTwitter(request);
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return "";
+        return socialData;
     }
 
     public SocialData YoutubeLogin(ServletRequest request){
@@ -171,6 +88,21 @@ public class SocialDataBL {
         }
         return value;
     }
+
+    private SocialData calculateData(JSONArray posts){
+        SocialData socialData = new SocialData();
+        try
+        {
+            socialData.setNumberOfPosts(posts.length());
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        return socialData;
+    }
+
+    //region Facebook
 
     private String getFacebookToken(String code){
         try {
@@ -246,18 +178,116 @@ public class SocialDataBL {
         return socialData;
     }
 
-    private SocialData calculateData(JSONArray posts){
-        SocialData socialData = new SocialData();
+    //endregion
+
+    //region Twitter
+
+    private String requestTwitterToken() {
+        String token = "";
+        URL url;
         try
         {
-            socialData.setNumberOfPosts(posts.length());
+            String consumer_key = "cAZvSJcPSJoJFBCylBgCcO3H4";
+            String consumer_secret = "VbHpDOo7L7qMdU5NaaK5LvyxCXcEGPrAzVrpUNtMaFNzfWZUHO";
+
+            String authorization = new OAuth1AuthorizationHeaderBuilder()
+                    .withMethod("POST")
+                    .withURL("https://api.twitter.com/oauth/request_token")
+                    .withConsumerSecret("VbHpDOo7L7qMdU5NaaK5LvyxCXcEGPrAzVrpUNtMaFNzfWZUHO")
+                    .withParameter("oauth_consumer_key", "cAZvSJcPSJoJFBCylBgCcO3H4")
+                    .withParameter("oauth_nonce", "tp9pdk9frXwLOwt3")
+                    .build();
+
+            url = new URL("https://api.twitter.com/oauth/request_token");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json");
+            con.setRequestProperty ("oauth_callback", "http%3A%2F%2Flocalhost%3A4200%2Fhome%2Ftwitter%2F");
+            con.setRequestProperty ("Authorization", authorization);
+
+            con.setUseCaches(false);
+            con.setDoOutput(true);
+            // Send request
+            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+            wr.close();
+            // Get Response
+            InputStream is = con.getInputStream();
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+            StringBuilder response = new StringBuilder(); // or StringBuffer if Java version 5+
+            String line;
+            while ((line = rd.readLine()) != null) {
+                response.append(line);
+                response.append('\r');
+            }
+            rd.close();
+
+            String responseBody = "{" + response.toString() + "}";
+            responseBody = responseBody.replace('=', ':').replace('&',',');
+            JSONObject jsonObject = new JSONObject(responseBody);
+
+            System.out.println(responseBody);
+            String oauthToken = jsonObject.getString("oauth_token");
+            return oauthToken;
         }
         catch(Exception e)
         {
+
+        }
+        return token;
+    }
+
+    private String loginTwitter(ServletRequest request) {
+        StringBuffer requestURL = ((HttpServletRequest) request).getRequestURL();
+        String queryString = ((HttpServletRequest) request).getQueryString();
+        Map parametri = getQueryMap(queryString);
+        String code = (String)parametri.get("verifier");
+        String token = (String)parametri.get("token");
+        String basicAuth = "OAuth oauth_consumer_key=\"cAZvSJcPSJoJFBCylBgCcO3H4\",oauth_token=" + token + ",oauth_signature_method=\"HMAC-SHA1\",oauth_timestamp=\"1580930206\",oauth_nonce=\"JRckMrFATih\",oauth_version=\"1.0\",oauth_signature=\"zqXAccQY4BSW0EZnF29k9wS9Pcc%3D\"";
+        URL url;
+
+        try {
+            url = new URL("https://api.twitter.com/oauth/access_token?oauth_verifier=" + code);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json");
+            con.setRequestProperty("oauth_verifier", code);
+            con.setRequestProperty("Authorization", basicAuth);
+
+            con.setUseCaches(false);
+            con.setDoOutput(true);
+            // Send request
+            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+            wr.close();
+            // Get Response
+            InputStream is = con.getInputStream();
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+            StringBuilder response = new StringBuilder(); // or StringBuffer if Java version 5+
+            String line;
+            while ((line = rd.readLine()) != null) {
+                response.append(line);
+                response.append('\r');
+            }
+            rd.close();
+
+            String responseBody = "{" + response.toString() + "}";
+            responseBody = responseBody.replace('=', ':').replace('&', ',');
+            JSONObject jsonObject = new JSONObject(responseBody);
+
+            System.out.println(responseBody);
+            String oauthToken = jsonObject.getString("oauth_token");
+            return oauthToken;
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        return socialData;
+        return "";
     }
+
+    //endregion
+
+    //region Youtube
 
     private String getYoutubeToken(String code){
         try {
@@ -372,13 +402,15 @@ public class SocialDataBL {
             String responseBody = response.toString();
             JSONObject jsonObject = new JSONObject(responseBody);
             JSONArray jsonArray = jsonObject.getJSONArray("items");
-            socialData.setNumberOfPosts(jsonArray.length());
+            socialData = calculateData(jsonArray);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
         return socialData;
     }
+
+    //endregion Youtube
 
     //endregion PrivateMethods
 }

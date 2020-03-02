@@ -35,8 +35,8 @@ export class AuthService {
       return this.http.get<User>(this.webApiUrl + "twitter");
     }
 
-    twitterLogin(verifier: String): Observable<User> {
-      return this.http.get<User>(this.webApiUrl + "twitterLogin?verifier=" + verifier);
+    twitterLogin(verifier: String, token: String): Observable<User> {
+      return this.http.get<User>(this.webApiUrl + "twitterLogin?verifier=" + verifier + "&token=" + token);
     }
 
     youtubeLogin(code: String): Observable<SocialData> {

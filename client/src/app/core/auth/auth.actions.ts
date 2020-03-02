@@ -34,5 +34,5 @@ export class GetTwitterLoginUrlAction{
 
 export class LoginTwitter {
     static type = '[Auth] Login twitter';
-    constructor( public verifier: String ){} 
+    constructor( public verifier: String, public token: String ){} 
 }

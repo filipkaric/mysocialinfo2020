@@ -153,6 +153,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   //Charts
 
   code: String;
+  twitterToken: String;
   routeEventSubscription: Subscription;
 
   constructor(
@@ -171,7 +172,8 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
       if (this.router.url.includes("twitter")) {
         this.code = params['oauth_verifier'];
-        this.store.dispatch(new authActions.LoginTwitter(this.code));
+        this.twitterToken = params['oauth_token'];
+        this.store.dispatch(new authActions.LoginTwitter(this.code, this.twitterToken));
       }
       if (this.router.url.includes("youtube")) {
         this.code = params['code'];
