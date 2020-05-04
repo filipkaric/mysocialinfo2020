@@ -1,16 +1,17 @@
+<div>
 <mat-toolbar>My Social Info</mat-toolbar>
-<button mat-flat-button class="mat-primary full-width" (click)="facebookLogin()">Facebook login</button>
-<button mat-flat-button class="mat-primary full-width" (click)="twitterLogin()">Twitter login</button>
-<button mat-flat-button class="mat-primary full-width" (click)="youtubeLogin()">Youtube login</button>
+<button mat-flat-button class="facebook loginButton mat-primary full-width" (click)="facebookLogin()">Facebook login</button>
+<button mat-flat-button class="twitter loginButton mat-primary full-width" (click)="twitterLogin()">Twitter login</button>
+<button mat-flat-button class="youtube loginButton mat-primary full-width" (click)="youtubeLogin()">Youtube login</button>
 <!--The content below is only a placeholder and can be replaced.-->
 <!-- <div style="text-align:center"> -->
-  <div fxLayout="column">
-    <h1 class="card-header bg-info">
-      Welcome to {{ title }}!
-    </h1>
-    <h3 class="text-secondary">
-      PEV Selling Countries
-    </h3>
+  <h1 style="text-align:center" class="card-header bg-info">
+    Welcome to {{ title }}!
+  </h1>
+  <h3 style="text-align:center" class="text-secondary">
+    PEV Selling Countries
+  </h3>
+  <div class="barsContainer" fxLayout="row wrap" fxLayoutAlign="space-evenly center">
     <div>
             <h4>
               Vertical Bar Chart
@@ -69,3 +70,4 @@
         </ngx-charts-bar-vertical-stacked>
       </div>
   </div>
+</div>

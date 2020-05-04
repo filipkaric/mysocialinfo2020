@@ -2,6 +2,14 @@ package mysocialinfo.mysocialinfo.businesslogic;
 
 import mysocialinfo.mysocialinfo.helpers.OAuth1AuthorizationHeaderBuilder;
 import mysocialinfo.mysocialinfo.models.SocialData;
+import mysocialinfo.mysocialinfo.models.TwitterAuthModel;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Repository;
@@ -18,8 +26,7 @@ import static mysocialinfo.mysocialinfo.helpers.ParameterStringBuilder.getQueryM
 @Repository
 public class SocialDataBL {
 
-    String facebookAccessToken;
-    String twitterToken;
+    private final CloseableHttpClient httpClient = HttpClients.createDefault();
 
     public SocialData FacebookLogin(ServletRequest request){
         if (! (request instanceof HttpServletRequest))
@@ -46,7 +53,9 @@ public class SocialDataBL {
     public SocialData LoginTwitter(ServletRequest request) {
         SocialData socialData = new SocialData();
         try {
-            String token = loginTwitter(request);
+            TwitterAuthModel twitterAuthModel = loginTwitter(request);
+
+            socialData = getTwitterData(twitterAuthModel);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -171,6 +180,7 @@ public class SocialDataBL {
             JSONArray posts = jsonObject.getJSONObject("posts").getJSONArray("data");
             System.out.println(posts);
             socialData = calculateData(posts);
+            socialData.setSocialNetwork("Facebook");
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -238,7 +248,7 @@ public class SocialDataBL {
         return token;
     }
 
-    private String loginTwitter(ServletRequest request) {
+    private TwitterAuthModel loginTwitter(ServletRequest request) {
         StringBuffer requestURL = ((HttpServletRequest) request).getRequestURL();
         String queryString = ((HttpServletRequest) request).getQueryString();
         Map parametri = getQueryMap(queryString);
@@ -278,11 +288,81 @@ public class SocialDataBL {
 
             System.out.println(responseBody);
             String oauthToken = jsonObject.getString("oauth_token");
-            return oauthToken;
+            String tokenSecret = jsonObject.getString("oauth_token_secret");
+            TwitterAuthModel authModel = new TwitterAuthModel(oauthToken, tokenSecret);
+            return authModel;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return "";
+        return null;
+    }
+
+    private SocialData getTwitterData(TwitterAuthModel twitterAuthModel){
+        SocialData socialData = new SocialData();
+        URL url;
+        String consumer_key = "cAZvSJcPSJoJFBCylBgCcO3H4";
+        String consumer_secret = "VbHpDOo7L7qMdU5NaaK5LvyxCXcEGPrAzVrpUNtMaFNzfWZUHO";
+
+        String authorization = new OAuth1AuthorizationHeaderBuilder()
+                .withMethod("GET")
+                .withURL("https://api.twitter.com/1.1/statuses/user_timeline.json")
+                .withConsumerSecret("VbHpDOo7L7qMdU5NaaK5LvyxCXcEGPrAzVrpUNtMaFNzfWZUHO")
+                .withParameter("oauth_consumer_key", "cAZvSJcPSJoJFBCylBgCcO3H4")
+                .withParameter("oauth_nonce", "WmWVcny05Nb")
+                .withParameter("oauth_token", twitterAuthModel.getToken())
+                .withTokenSecret(twitterAuthModel.getTokenSecret())
+                .build();
+        try {
+            HttpGet request = new HttpGet("https://api.twitter.com/1.1/statuses/user_timeline.json");
+
+            // add request headers
+//            request.addHeader("custom-key", "mkyong");
+            request.addHeader("Authorization", authorization);
+
+//            con.setRequestMethod("GET");
+//            con.setRequestProperty("Content-Type", "application/json");
+//            con.setRequestProperty("Authorization", authorization);
+//
+//            con.setUseCaches(false);
+//            con.setDoOutput(true);
+            // Send request
+            try (CloseableHttpResponse response = httpClient.execute(request)) {
+
+                // Get HttpResponse Status
+                System.out.println(response.getStatusLine().toString());
+
+                HttpEntity entity = response.getEntity();
+                Header headers = entity.getContentType();
+                System.out.println(headers);
+
+                if (entity != null) {
+                    // return it as a String
+                    String result = EntityUtils.toString(entity);
+                    System.out.println(result);
+
+                    String data = response.toString();
+                    JSONArray posts = new JSONArray(result);
+                    System.out.println(posts);
+                    socialData = calculateData(posts);
+                }
+
+            }
+//            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+//            wr.close();
+//            // Get Response
+//            InputStream is = con.getInputStream();
+//            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+//            StringBuilder response = new StringBuilder(); // or StringBuffer if Java version 5+
+//            String line;
+//            while ((line = rd.readLine()) != null) {
+//                response.append(line);
+//                response.append('\r');
+//            }
+//            rd.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return socialData;
     }
 
     //endregion
@@ -329,7 +409,8 @@ public class SocialDataBL {
     private String getYoutubeChannelId(String token){
         URL url;
         try {
-            url = new URL("https://www.googleapis.com/youtube/v3/channels?access_token="+token+"&part=id&mine=true&key=AIzaSyBoJZcIoxh16GxFFJqIBqpFNTb6WCbNdFk");
+            url = new URL("https://www.googleapis.com/youtube/v3/channels?access_token="+token+"&part=id&mine=true");
+//                    "&key=AIzaSyBoJZcIoxh16GxFFJqIBqpFNTb6WCbNdFk");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
 
@@ -370,8 +451,9 @@ public class SocialDataBL {
         URL url;
         SocialData socialData = new SocialData();
         try {
-            url = new URL("https://www.googleapis.com/youtube/v3/search?key=AIzaSyBoJZcIoxh16GxFFJqIBqpFNTb6WCbNdFk&channelId=" + channelId +
-                    "&part=snippet,id&order=date&maxResults=50");
+//            url = new URL("https://www.googleapis.com/youtube/v3/search?key=AIzaSyBoJZcIoxh16GxFFJqIBqpFNTb6WCbNdFk&channelId=" + channelId +
+//                    "&part=snippet,id&order=date&maxResults=50");
+            url = new URL("https://www.googleapis.com/youtube/v3/search?part=snippet&channelId="+ channelId +"&order=date&type=video&key=AIzaSyBoJZcIoxh16GxFFJqIBqpFNTb6WCbNdFk");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
 
@@ -401,8 +483,9 @@ public class SocialDataBL {
 
             String responseBody = response.toString();
             JSONObject jsonObject = new JSONObject(responseBody);
-            JSONArray jsonArray = jsonObject.getJSONArray("items");
-            socialData = calculateData(jsonArray);
+            JSONObject pageInfo = jsonObject.getJSONObject("pageInfo");
+            int numberOfPosts = pageInfo.getInt("totalResults");
+            socialData.setNumberOfPosts(numberOfPosts);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

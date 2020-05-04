@@ -1,0 +1,20 @@
+.barsContainer {
+    margin-left: 50px;
+}
+
+.loginButton {
+    margin-top: 20px;
+    margin-left: 20px;
+}
+
+.facebook {
+    background-color: #3b5998 !important;
+}
+
+.twitter {
+    background-color: #00acee !important;
+}
+
+.youtube {
+    background-color: #FF0000 !important;
+}

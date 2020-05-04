@@ -1,9 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 import { Store } from '@ngxs/store';
 import * as authActions from '../../auth/auth.actions';
 import { environment } from 'src/environments/environment';
+import { SocialData } from '../../models/social-data.model';
 
 @Component({
   selector: 'app-home',
@@ -15,6 +16,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   //Charts
 
   title = 'Angular Charts';
+  facebookData$: Observable<SocialData>;
+  twitterData$: Observable<SocialData>;
 
   view: any[] = [600, 400];
 
@@ -24,9 +27,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   gradient = false;
   showLegend = true;
   showXAxisLabel = true;
-  xAxisLabel = 'Country';
+  xAxisLabel = 'Друштвена мрежа';
   showYAxisLabel = true;
-  yAxisLabel = 'Sales';
+  yAxisLabel = 'Број постова';
   timeline = true;
 
   colorScheme = {
@@ -155,12 +158,18 @@ export class HomeComponent implements OnInit, OnDestroy {
   code: String;
   twitterToken: String;
   routeEventSubscription: Subscription;
+  facebookSubscription: Subscription;
+  twitterSubscription: Subscription;
 
   constructor(
     private route: ActivatedRoute,
     private store: Store,
-    private router: Router
-  ) { }
+    private router: Router,
+    private changeDetectorRef: ChangeDetectorRef
+  ) {
+    this.facebookData$ = this.store.select(state => state.auth.facebookData);
+    this.twitterData$ = this.store.select(state => state.auth.twitterData);
+   }
 
   ngOnInit() {
     this.routeEventSubscription = this.route.queryParams.subscribe(params => {
@@ -179,7 +188,25 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.code = params['code'];
         this.store.dispatch(new authActions.LoginYoutubeAction(this.code));
       }
-    })
+    });
+    this.facebookSubscription = this.facebookData$.subscribe(result => {
+      if(result) {
+      const noviRed = {
+          "name": result.socialNetwork,
+          "value": result.numberOfPosts
+        };
+      this.single.push(noviRed);
+      }
+    });
+    this.twitterSubscription = this.twitterData$.subscribe(result => {
+      if(result) {
+      const noviRed = {
+          "name": result.socialNetwork,
+          "value": result.numberOfPosts
+        };
+      this.single.push(noviRed);
+      }
+    });
   }
 
   facebookLogin() {
@@ -198,6 +225,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.routeEventSubscription !== undefined) {
       this.routeEventSubscription.unsubscribe();
+    }
+    if (this.facebookSubscription !== undefined) {
+      this.facebookSubscription.unsubscribe();
+    }
+    if (this.twitterSubscription !== undefined) {
+      this.twitterSubscription.unsubscribe();
     }
   }
 

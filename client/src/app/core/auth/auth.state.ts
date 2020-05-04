@@ -12,6 +12,8 @@ export interface AuthStateModel {
     isAuthenticated: boolean;
     user: User;
     facebookData: SocialData;
+    youtubeData: SocialData;
+    twitterData: SocialData;
 }
 
 @State<AuthStateModel>({
@@ -19,7 +21,9 @@ export interface AuthStateModel {
     defaults: {
         isAuthenticated: false,
         user: null,
-        facebookData: null
+        facebookData: null,
+        youtubeData: null,
+        twitterData: null
     }
 })
 
@@ -93,8 +97,9 @@ export class AuthState {
     @Action(authActions.LoginTwitter)
     loginTwitter(ctx: StateContext<AuthStateModel>, action: authActions.LoginTwitter) {
         return this.authService.twitterLogin(action.verifier, action.token).pipe(
-            tap((user: User) => {
-                
+            tap((twitterData: SocialData) => {
+                debugger
+                ctx.patchState({twitterData})
             }),
             catchError(error => {
                 return ctx.dispatch(new authActions.LoginFailedAction(error))
