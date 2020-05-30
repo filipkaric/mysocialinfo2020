@@ -98,7 +98,6 @@ export class AuthState {
     loginTwitter(ctx: StateContext<AuthStateModel>, action: authActions.LoginTwitter) {
         return this.authService.twitterLogin(action.verifier, action.token).pipe(
             tap((twitterData: SocialData) => {
-                debugger
                 ctx.patchState({twitterData})
             }),
             catchError(error => {
@@ -110,8 +109,8 @@ export class AuthState {
     @Action(authActions.LoginYoutubeAction)
     loginYoutube(ctx: StateContext<AuthStateModel>, action: authActions.LoginYoutubeAction) {
         return this.authService.youtubeLogin(action.code).pipe(
-            tap((facebookData: SocialData) => {
-                ctx.patchState({facebookData})
+            tap((youtubeData: SocialData) => {
+                ctx.patchState({youtubeData})
             }),
             catchError(error => {
                 return ctx.dispatch(new authActions.LoginFailedAction(error))

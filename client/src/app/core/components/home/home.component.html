@@ -12,14 +12,14 @@
     PEV Selling Countries
   </h3>
   <div class="barsContainer" fxLayout="row wrap" fxLayoutAlign="space-evenly center">
-    <div>
+    <div *ngIf="numberOfPostsGraphData && numberOfPostsGraphData.length > 0">
             <h4>
               Vertical Bar Chart
             </h4>
                 <ngx-charts-bar-vertical
                 [view]="view"
                 [scheme]="colorScheme"
-                [results]="single"
+                [results]="numberOfPostsGraphData"
                 [gradient]="gradient"
                 [xAxis]="showXAxis"
                 [yAxis]="showYAxis"
@@ -27,11 +27,11 @@
                 [showXAxisLabel]="showXAxisLabel"
                 [showYAxisLabel]="showYAxisLabel"
                 [xAxisLabel]="xAxisLabel"
-                [yAxisLabel]="yAxisLabel"
-                (select)="onSelect($event)">
+                [yAxisLabel]="yAxisLabel">
+                <!-- (select)="onSelect($event)"> -->
                 </ngx-charts-bar-vertical>
       </div>
-      <div>
+      <!-- <div>
             <h4>
               Vertical Bar Chart Normalized
             </h4>
@@ -68,6 +68,6 @@
         [yAxisLabel]="yAxisLabel"
         (select)="onSelect($event)">
         </ngx-charts-bar-vertical-stacked>
-      </div>
+      </div> -->
   </div>
 </div>

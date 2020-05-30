@@ -59,6 +59,7 @@ public class SocialDataBL {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        socialData.setSocialNetwork("Twitter");
         return socialData;
     }
 
@@ -78,6 +79,7 @@ public class SocialDataBL {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        socialData.setSocialNetwork("Youtube");
         return socialData;
     }
 
@@ -291,7 +293,7 @@ public class SocialDataBL {
             String tokenSecret = jsonObject.getString("oauth_token_secret");
             TwitterAuthModel authModel = new TwitterAuthModel(oauthToken, tokenSecret);
             return authModel;
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -359,7 +361,7 @@ public class SocialDataBL {
 //                response.append('\r');
 //            }
 //            rd.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return socialData;

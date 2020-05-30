@@ -5,6 +5,7 @@ import { Store } from '@ngxs/store';
 import * as authActions from '../../auth/auth.actions';
 import { environment } from 'src/environments/environment';
 import { SocialData } from '../../models/social-data.model';
+import { GraphData } from '../../models/graph-data.model';
 
 @Component({
   selector: 'app-home',
@@ -18,6 +19,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   title = 'Angular Charts';
   facebookData$: Observable<SocialData>;
   twitterData$: Observable<SocialData>;
+  youtubeData$: Observable<SocialData>;
 
   view: any[] = [600, 400];
 
@@ -31,6 +33,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   showYAxisLabel = true;
   yAxisLabel = 'Број постова';
   timeline = true;
+
+  numberOfPostsGraphData: GraphData[] = [];
 
   colorScheme = {
     domain: ['#9370DB', '#87CEFA', '#FA8072', '#FF7F50', '#90EE90', '#9370DB']
@@ -160,6 +164,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   routeEventSubscription: Subscription;
   facebookSubscription: Subscription;
   twitterSubscription: Subscription;
+  youtubeSubscription: Subscription;
 
   constructor(
     private route: ActivatedRoute,
@@ -169,6 +174,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) {
     this.facebookData$ = this.store.select(state => state.auth.facebookData);
     this.twitterData$ = this.store.select(state => state.auth.twitterData);
+    this.youtubeData$ = this.store.select(state => state.auth.youtubeData);
    }
 
   ngOnInit() {
@@ -191,20 +197,37 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
     this.facebookSubscription = this.facebookData$.subscribe(result => {
       if(result) {
-      const noviRed = {
-          "name": result.socialNetwork,
-          "value": result.numberOfPosts
-        };
-      this.single.push(noviRed);
+      const data = <GraphData>{
+        name: result.socialNetwork,
+        value: result.numberOfPosts
+      }
+      this.numberOfPostsGraphData.push(data);
+      this.numberOfPostsGraphData = [...this.numberOfPostsGraphData];
+      this.changeDetectorRef.detectChanges();
       }
     });
     this.twitterSubscription = this.twitterData$.subscribe(result => {
       if(result) {
-      const noviRed = {
-          "name": result.socialNetwork,
-          "value": result.numberOfPosts
-        };
-      this.single.push(noviRed);
+        debugger
+      const data = <GraphData>{
+        name: result.socialNetwork,
+        value: result.numberOfPosts
+      }
+      this.numberOfPostsGraphData.push(data);
+      this.numberOfPostsGraphData = [...this.numberOfPostsGraphData];
+      this.changeDetectorRef.detectChanges();
+      }
+    });
+    this.youtubeSubscription = this.youtubeData$.subscribe(result => {
+      if(result) {
+        debugger
+      const data = <GraphData>{
+        name: result.socialNetwork,
+        value: result.numberOfPosts
+      }
+      this.numberOfPostsGraphData.push(data);
+      this.numberOfPostsGraphData = [...this.numberOfPostsGraphData];
+      this.changeDetectorRef.detectChanges();
       }
     });
   }
@@ -231,6 +254,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
     if (this.twitterSubscription !== undefined) {
       this.twitterSubscription.unsubscribe();
+    }
+    if (this.youtubeSubscription !== undefined) {
+      this.youtubeSubscription.unsubscribe();
     }
   }
 
