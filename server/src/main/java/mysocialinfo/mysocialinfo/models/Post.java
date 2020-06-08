@@ -7,7 +7,7 @@ import java.util.Date;
 public class Post {
     @JsonProperty("created_time")
     private Date createdTime;
-    @JsonProperty("created_time")
+    @JsonProperty("message")
     private String message;
 
     public Post(Date createdTime, String message) {
