@@ -12,6 +12,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import javax.servlet.ServletRequest;
@@ -27,6 +28,9 @@ import static mysocialinfo.mysocialinfo.helpers.ParameterStringBuilder.getQueryM
 public class SocialDataBL {
 
     private final CloseableHttpClient httpClient = HttpClients.createDefault();
+
+    @Value("${facebook.accestoken}")
+    private String accessTokenFacebookUrl;
 
     public SocialData FacebookLogin(ServletRequest request){
         if (! (request instanceof HttpServletRequest))
@@ -117,10 +121,7 @@ public class SocialDataBL {
 
     private String getFacebookToken(String code){
         try {
-            URL url = new URL("https://graph.facebook.com/v5.0/oauth/access_token?client_id=490841858175046" +
-                    "&redirect_uri=http%3A%2F%2Flocalhost%3A4200%2Fhome%2Ffacebook%2F" +
-                    "&client_secret=5065cf17fe5cab49d7a89e7354dc3630" +
-                    "&code=" + code);
+            URL url = new URL(accessTokenFacebookUrl + code);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
 
