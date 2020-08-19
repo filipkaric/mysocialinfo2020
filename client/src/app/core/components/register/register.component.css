@@ -1,0 +1,25 @@
+.page-wrap{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 1rem;
+    height: 100%;
+}
+
+.full-width{
+    width: 100% !important;
+}
+
+.form-error-msg {
+    color: red;
+    display: block;
+    padding: 5px 0;
+}
+
+.width-30{
+    width: 30%;
+}
+
+.height-30{
+    height: 50%;
+}

@@ -208,7 +208,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
     this.twitterSubscription = this.twitterData$.subscribe(result => {
       if(result) {
-        debugger
       const data = <GraphData>{
         name: result.socialNetwork,
         value: result.numberOfPosts
@@ -220,7 +219,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
     this.youtubeSubscription = this.youtubeData$.subscribe(result => {
       if(result) {
-        debugger
       const data = <GraphData>{
         name: result.socialNetwork,
         value: result.numberOfPosts

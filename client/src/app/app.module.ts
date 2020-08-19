@@ -18,12 +18,14 @@ import { AuthGuard } from './core/auth/auth.guard';
 import { HomeComponent } from './core/components/home/home.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { RegisterComponent } from './core/components/register/register.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    HomeComponent
+    HomeComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,

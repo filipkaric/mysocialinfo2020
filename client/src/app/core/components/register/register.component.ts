@@ -6,41 +6,37 @@ import * as authActions from '../../auth/auth.actions';
 import { AuthState } from '../../auth/auth.state';
 import { Observable } from 'rxjs';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  selector: 'app-register',
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.css']
 })
-export class LoginComponent implements OnInit {
+export class RegisterComponent implements OnInit {
 
   @Select(AuthState.getUser)
   loggedUser$: Observable<User>;
   loggedUser: User;
 
-  loginForm: FormGroup;
+  registerForm: FormGroup;
 
   constructor(
-    private store: Store,
-    private router: Router
+    private store: Store
   ) { }
 
   login() {
-    const username = this.loginForm.get('username').value;
-    const password = this.loginForm.get('password').value;
+    const username = this.registerForm.get('username').value;
+    const password = this.registerForm.get('username').value;
     let loginData = <LoginData>{ username: username, password: password};
     this.store.dispatch(new authActions.LoginUsernamePasswordAction(loginData));
   }
 
-  register(){
-    this.router.navigate(['/register']);
-  }
-
   ngOnInit() {
-    this.loginForm = new FormGroup({
-      username: new FormControl('', Validators.required),
-      password: new FormControl('', Validators.required)
+    this.registerForm = new FormGroup({
+      name: new FormControl('', Validators.required),
+      email: new FormControl('', Validators.required),
+      password: new FormControl('', Validators.required),
+      passwordConfirm: new FormControl('', Validators.required)
     })
         
 
@@ -49,5 +45,4 @@ export class LoginComponent implements OnInit {
         this.loggedUser = result;
       })
   }
-
 }

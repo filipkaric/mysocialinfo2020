@@ -27,16 +27,6 @@ public class SocialController {
         return facebookAccessToken;
     }
 
-    @RequestMapping("/save")
-    public String Save(){
-        User ulogovanKorisnik = new User();
-        ulogovanKorisnik.setFirstname("Filip");
-        ulogovanKorisnik.setLastname("Karic");
-        ulogovanKorisnik.setEmail("kfilip94@gmail.com");
-        userRepository.save(ulogovanKorisnik);
-        return "facebookAccessToken";
-    }
-
     @RequestMapping("/facebook")
     public SocialData LoginToFacebook(ServletRequest request){
         if (!(request instanceof HttpServletRequest))
