@@ -20,6 +20,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   facebookData$: Observable<SocialData>;
   twitterData$: Observable<SocialData>;
   youtubeData$: Observable<SocialData>;
+  facebookLoggedIn: boolean = false;
+  twitterLoggedIn: boolean = false;
+  youtubeLoggedIn: boolean = false;
 
   view: any[] = [600, 400];
 
@@ -197,6 +200,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
     this.facebookSubscription = this.facebookData$.subscribe(result => {
       if(result) {
+      this.facebookLoggedIn = true;
       const data = <GraphData>{
         name: result.socialNetwork,
         value: result.numberOfPosts
@@ -208,6 +212,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
     this.twitterSubscription = this.twitterData$.subscribe(result => {
       if(result) {
+      this.twitterLoggedIn = true;
       const data = <GraphData>{
         name: result.socialNetwork,
         value: result.numberOfPosts
@@ -219,6 +224,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
     this.youtubeSubscription = this.youtubeData$.subscribe(result => {
       if(result) {
+      this.youtubeLoggedIn = true;
       const data = <GraphData>{
         name: result.socialNetwork,
         value: result.numberOfPosts
