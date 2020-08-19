@@ -13,9 +13,6 @@
     <button mat-flat-button class="twitter loginButton mat-primary full-width" (click)="twitterLogin()" [disabled]='twitterLoggedIn'>Твитер пријава</button>
     <button mat-flat-button class="youtube loginButton mat-primary full-width" (click)="youtubeLogin()"[disabled]='youtubeLoggedIn'>Јутјуб пријава</button>
   </div>
-  <!-- <h3 style="text-align:center" class="text-secondary">
-    PEV Selling Countries
-  </h3> -->
   <div class="barsContainer" fxLayout="row wrap" fxLayoutAlign="space-evenly center">
     <div *ngIf="numberOfPostsGraphData && numberOfPostsGraphData.length > 0">
             <h4>

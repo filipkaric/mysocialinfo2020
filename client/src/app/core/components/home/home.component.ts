@@ -40,7 +40,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   numberOfPostsGraphData: GraphData[] = [];
 
   colorScheme = {
-    domain: ['#9370DB', '#87CEFA', '#FA8072', '#FF7F50', '#90EE90', '#9370DB']
+    domain: ['#3B5998', '#00ACEE', '#FF0000', '#FF7F50', '#90EE90', '#9370DB']
   };
 
   //pie
