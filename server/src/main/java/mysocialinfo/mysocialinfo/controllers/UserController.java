@@ -27,4 +27,15 @@ public class UserController {
         userRepository.save(ulogovanKorisnik);
         return "facebookAccessToken";
     }
+
+    @RequestMapping(path = "/register", method = RequestMethod.POST)
+    public User Login(@RequestBody LoginData loginData){
+        if(loginData.getUsername().equals("123") && loginData.getPassword().equals("123")){
+            User ulogovanKorisnik = new User();
+            ulogovanKorisnik.setFirstname("Filip");
+            ulogovanKorisnik.setLastname("Karic");
+            return ulogovanKorisnik;
+        }
+        return null;
+    }
 }
