@@ -1,4 +1,4 @@
-package mysocialinfo.mysocialinfo.models;
+package mysocialinfo.models;
 
 import javax.persistence.*;
 import java.util.Objects;

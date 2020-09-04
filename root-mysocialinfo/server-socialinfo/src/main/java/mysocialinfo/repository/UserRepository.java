@@ -1,4 +1,4 @@
-package mysocialinfo.mysocialinfo.repository;
+package mysocialinfo.repository;
 
 import mysocialinfo.mysocialinfo.models.User;
 import org.springframework.data.repository.CrudRepository;

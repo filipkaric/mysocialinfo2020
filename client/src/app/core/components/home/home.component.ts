@@ -6,6 +6,8 @@ import * as authActions from '../../auth/auth.actions';
 import { environment } from 'src/environments/environment';
 import { SocialData } from '../../models/social-data.model';
 import { GraphData } from '../../models/graph-data.model';
+import { MultiGraphData } from '../../models/multi-graph-data.model';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -38,6 +40,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   timeline = true;
 
   numberOfPostsGraphData: GraphData[] = [];
+  mutliGraphData: MultiGraphData[] = [];
 
   colorScheme = {
     domain: ['#3B5998', '#00ACEE', '#FF0000', '#FF7F50', '#90EE90', '#9370DB']
@@ -173,7 +176,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private store: Store,
     private router: Router,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private service: AuthService
   ) {
     this.facebookData$ = this.store.select(state => state.auth.facebookData);
     this.twitterData$ = this.store.select(state => state.auth.twitterData);
@@ -234,6 +238,37 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.changeDetectorRef.detectChanges();
       }
     });
+    const multiData = <MultiGraphData>{
+      name: 'China',
+      series: []
+    }
+    const regularData = <GraphData>{
+      name: '2018',
+      value: 2243772
+    }
+    const regularData1 = <GraphData>{
+      name: '2017',
+      value: 1243772
+    }
+    multiData.series.push(regularData);
+    multiData.series.push(regularData1);
+    this.mutliGraphData.push(multiData);
+    const multiData1 = <MultiGraphData>{
+      name: 'USA',
+      series: []
+    }
+    const regularData2 = <GraphData>{
+      name: '2018',
+      value: 3243772
+    }
+    const regularData3 = <GraphData>{
+      name: '2017',
+      value: 2243772
+    }
+    multiData1.series.push(regularData2);
+    multiData1.series.push(regularData3);
+    this.mutliGraphData.push(multiData1);
+    this.mutliGraphData = [...this.mutliGraphData];
   }
 
   facebookLogin() {
@@ -247,6 +282,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   twitterLogin() {
     // window.location.href = 'https://api.twitter.com/oauth/authenticate?oauth_token=O2BdKgAAAAABCJUlAAABb_1eNaE';
     this.store.dispatch(new authActions.GetTwitterLoginUrlAction);
+  }
+
+  logout(){
+    this.store.dispatch(new authActions.LogoutAction());
   }
 
   ngOnDestroy() {

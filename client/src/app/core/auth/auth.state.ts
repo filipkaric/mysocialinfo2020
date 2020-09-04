@@ -117,4 +117,29 @@ export class AuthState {
             })
         )
     }
+
+    @Action(authActions.LogoutAction)
+    logout(ctx: StateContext<AuthStateModel>, action: authActions.LogoutAction) {
+        return this.authService.logout().pipe(
+            tap((sucess: boolean) => {
+                ctx.dispatch(new authActions.LogoutSuccessAction(sucess))
+            }),
+            catchError(error => {
+                return ctx.dispatch(new authActions.LoginFailedAction(error))
+            })
+        )
+    }
+
+    @Action(authActions.LogoutSuccessAction)
+    logoutSuccess(ctx: StateContext<AuthStateModel>, action: authActions.LogoutSuccessAction) {
+        if (action.successful) {
+            ctx.patchState({
+                isAuthenticated: false,
+                user: null
+            });
+            this.zone.run(() =>
+                this.router.navigate(['/'])
+            )
+        }
+    }
 }

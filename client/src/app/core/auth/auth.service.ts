@@ -42,4 +42,8 @@ export class AuthService {
     youtubeLogin(code: String): Observable<SocialData> {
       return this.http.get<SocialData>(this.webApiUrl + "youtube?code=" + code);
     }
+
+    logout(): Observable<boolean> {
+      return this.http.post<boolean>(this.webApiUrl + "test", '');
+    }
 }

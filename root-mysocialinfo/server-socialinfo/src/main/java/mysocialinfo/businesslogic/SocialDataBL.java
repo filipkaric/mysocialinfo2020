@@ -1,4 +1,4 @@
-package mysocialinfo.mysocialinfo.businesslogic;
+package mysocialinfo.businesslogic;
 
 import mysocialinfo.mysocialinfo.helpers.OAuth1AuthorizationHeaderBuilder;
 import mysocialinfo.mysocialinfo.models.SocialData;

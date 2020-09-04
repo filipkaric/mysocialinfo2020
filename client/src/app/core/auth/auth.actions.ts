@@ -36,3 +36,13 @@ export class LoginTwitter {
     static type = '[Auth] Login twitter';
     constructor( public verifier: String, public token: String ){} 
 }
+
+export class LogoutAction{
+    static type = '[Auth] Logout';
+    constructor () { }
+}
+
+export class LogoutSuccessAction {
+    static type = '[Auth] Logout success';
+    constructor ( public successful: boolean) { }
+}

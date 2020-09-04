@@ -1,5 +1,6 @@
 <div>
-<mat-toolbar><mat-icon>public</mat-icon> Мој друштвени ИНФО</mat-toolbar>
+<mat-toolbar><mat-icon>public</mat-icon> Мој друштвени ИНФО
+  <button (click)="logout()">Logout</button></mat-toolbar>
 <!--The content below is only a placeholder and can be replaced.-->
 <!-- <div style="text-align:center"> -->
   <h1 style="text-align:center" class="card-header bg-info">
@@ -33,14 +34,14 @@
                 <!-- (select)="onSelect($event)"> -->
                 </ngx-charts-bar-vertical>
       </div>
-      <!-- <div>
+      <div>
             <h4>
               Vertical Bar Chart Normalized
             </h4>
             <ngx-charts-bar-vertical-normalized
             [view]="view"
             [scheme]="colorScheme"
-            [results]="multi"
+            [results]="mutliGraphData"
             [gradient]="gradient"
             [xAxis]="showXAxis"
             [yAxis]="showYAxis"
@@ -48,10 +49,11 @@
             [showXAxisLabel]="showXAxisLabel"
             [showYAxisLabel]="showYAxisLabel"
             [xAxisLabel]="xAxisLabel"
-            [yAxisLabel]="yAxisLabel"
-            (select)="onSelect($event)">
+            [yAxisLabel]="yAxisLabel">
+            <!-- (select)="onSelect($event)"> -->
             </ngx-charts-bar-vertical-normalized>
       </div>
+      
       <div>
         <h4>
           Stacked Vertical Bar Chart
@@ -59,7 +61,7 @@
         <ngx-charts-bar-vertical-stacked
         [view]="view"
         [scheme]="colorScheme"
-        [results]="multi"
+        [results]="mutliGraphData"
         [gradient]="gradient"
         [xAxis]="showXAxis"
         [yAxis]="showYAxis"
@@ -70,7 +72,7 @@
         [yAxisLabel]="yAxisLabel"
         (select)="onSelect($event)">
         </ngx-charts-bar-vertical-stacked>
-      </div> -->
+      </div>
   </div>
 </div>
 <footer class="footer">
