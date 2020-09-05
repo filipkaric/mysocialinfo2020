@@ -40,7 +40,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   timeline = true;
 
   numberOfPostsGraphData: GraphData[] = [];
-  mutliGraphData: MultiGraphData[] = [];
+  multiGraphData: MultiGraphData[] = [];
 
   colorScheme = {
     domain: ['#3B5998', '#00ACEE', '#FF0000', '#FF7F50', '#90EE90', '#9370DB']
@@ -252,7 +252,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
     multiData.series.push(regularData);
     multiData.series.push(regularData1);
-    this.mutliGraphData.push(multiData);
+    this.multiGraphData.push(multiData);
     const multiData1 = <MultiGraphData>{
       name: 'USA',
       series: []
@@ -267,8 +267,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
     multiData1.series.push(regularData2);
     multiData1.series.push(regularData3);
-    this.mutliGraphData.push(multiData1);
-    this.mutliGraphData = [...this.mutliGraphData];
+    this.multiGraphData.push(multiData1);
+    this.multiGraphData = [...this.multiGraphData];
   }
 
   facebookLogin() {

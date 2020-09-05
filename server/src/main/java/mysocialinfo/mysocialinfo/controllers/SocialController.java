@@ -46,8 +46,7 @@ public class SocialController {
     public SocialData TwitterLogin(ServletRequest request){
         if (!(request instanceof HttpServletRequest))
             return null;
-        SocialData fica = socialDataBL.LoginTwitter(request);
-        return fica;
+        return socialDataBL.LoginTwitter(request);
     }
 
     @RequestMapping("/youtube")

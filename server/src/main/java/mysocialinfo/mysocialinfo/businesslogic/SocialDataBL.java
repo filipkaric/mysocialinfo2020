@@ -24,6 +24,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -178,7 +182,7 @@ public class SocialDataBL {
             JSONObject jsonObject = new JSONObject(response.toString());
             JSONArray posts = jsonObject.getJSONObject("posts").getJSONArray("data");
             System.out.println(posts);
-            socialData = calculateData(posts);
+            socialData = calculateData(posts, SocialNetwork.FACEBOOK);
             socialData.setSocialNetwork("Facebook");
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -331,7 +335,7 @@ public class SocialDataBL {
                     String data = response.toString();
                     JSONArray posts = new JSONArray(result);
                     System.out.println(posts);
-                    socialData = calculateData(posts);
+                    socialData = calculateData(posts, SocialNetwork.TWITTER);
                 }
 
             }
@@ -457,6 +461,7 @@ public class SocialDataBL {
             String responseBody = response.toString();
             JSONObject jsonObject = new JSONObject(responseBody);
             JSONObject pageInfo = jsonObject.getJSONObject("pageInfo");
+            socialData = calculateData(jsonObject.getJSONArray("items"), SocialNetwork.YOUTUBE);
             int numberOfPosts = pageInfo.getInt("totalResults");
             socialData.setNumberOfPosts(numberOfPosts);
         } catch (Exception e) {
@@ -650,14 +655,46 @@ public class SocialDataBL {
         return value;
     }
 
-    private SocialData calculateData(JSONArray posts){
+    private SocialData calculateData(JSONArray posts, SocialNetwork socialNetwork) {
         SocialData socialData = new SocialData();
-        try
-        {
+        int numberOfPostsCurrentMonth = 0;
+        int numberOfPostsLastMonth = 0;
+        int numberOfPostsTwoMonthsAgo = 0;
+        YearMonth currentMonth    = YearMonth.now();
+        YearMonth lastMonth    = currentMonth.minusMonths(1);
+        YearMonth twoMonthsAgo = currentMonth.minusMonths(2);
+        String key = "";
+
+        try {
+            switch (socialNetwork){
+                case FACEBOOK:
+                    key = "created_time";
+                    break;
+                case TWITTER:
+                    key = "created_at";
+                    break;
+                case YOUTUBE:
+                    key = "publish_time";
+                    break;
+            }
             socialData.setNumberOfPosts(posts.length());
-        }
-        catch(Exception e)
-        {
+            LinkedList<String> list = new LinkedList<String>();
+            for (int i=0; i<posts.length(); i++) {
+                JSONObject object = posts.getJSONObject(i);
+                LocalDate inputDate = LocalDate.parse(object.getString(key).substring(0, 10));
+                if(inputDate.getMonth() == currentMonth.getMonth()){
+                    ++numberOfPostsCurrentMonth;
+                } else if(inputDate.getMonth() == lastMonth.getMonth()){
+                    ++numberOfPostsLastMonth;
+                } else if(inputDate.getMonth() == twoMonthsAgo.getMonth()){
+                    ++numberOfPostsTwoMonthsAgo;
+                };
+            }
+            socialData.setNumberOfPostsCurrentMonth(numberOfPostsCurrentMonth);
+            socialData.setNumberOfPostsLastMonth(numberOfPostsLastMonth);
+            socialData.setNumberOfPostsTwoMonthsAgo(numberOfPostsTwoMonthsAgo);
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return socialData;
