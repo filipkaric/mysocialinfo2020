@@ -135,7 +135,10 @@ export class AuthState {
         if (action.successful) {
             ctx.patchState({
                 isAuthenticated: false,
-                user: null
+                user: null,
+                facebookData: null,
+                youtubeData: null,
+                twitterData: null
             });
             this.zone.run(() =>
                 this.router.navigate(['/'])

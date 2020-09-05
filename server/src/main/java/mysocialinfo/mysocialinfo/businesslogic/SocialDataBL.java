@@ -1,8 +1,10 @@
 package mysocialinfo.mysocialinfo.businesslogic;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import mysocialinfo.mysocialinfo.config.AuthenticationPrincipal;
 import mysocialinfo.mysocialinfo.helpers.OAuth1AuthorizationHeaderBuilder;
-import mysocialinfo.mysocialinfo.models.SocialData;
-import mysocialinfo.mysocialinfo.models.TwitterAuthModel;
+import mysocialinfo.mysocialinfo.models.*;
+import mysocialinfo.mysocialinfo.repository.UserProfileRepository;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -12,14 +14,17 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.servlet.tags.Param;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.LinkedList;
 import java.util.Map;
 
 import static mysocialinfo.mysocialinfo.helpers.ParameterStringBuilder.getQueryMap;
@@ -27,7 +32,10 @@ import static mysocialinfo.mysocialinfo.helpers.ParameterStringBuilder.getQueryM
 @Repository
 public class SocialDataBL {
 
-//    private Qwee qwe;
+    @Autowired
+    UserProfileRepository userProfileRepository;
+    @Autowired
+    private AuthenticationPrincipal authenticationPrincipal;
 
     private final CloseableHttpClient httpClient = HttpClients.createDefault();
 
@@ -35,16 +43,26 @@ public class SocialDataBL {
     private String accessTokenFacebookUrl;
 
     public SocialData FacebookLogin(ServletRequest request){
-        if (! (request instanceof HttpServletRequest))
+        try {
+            if (!(request instanceof HttpServletRequest))
+                return null;
+
+            String code = getValueFromRequestParameter(request, "code");
+
+            String token = getFacebookToken(code);
+
+            this.saveTokenAndUserProfile(token, null, SocialNetwork.FACEBOOK);
+
+            this.getProfileData(SocialNetwork.FACEBOOK);
+
+            SocialData data = getFacebookData(token);
+
+            return data;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
             return null;
-
-        String code = getValueFromRequestParameter(request, "code");
-
-        String token = getFacebookToken(code);
-
-        SocialData data = getFacebookData(token);
-
-        return data;
+        }
     }
 
     public String TwitterUrlToken() {
@@ -60,6 +78,8 @@ public class SocialDataBL {
         SocialData socialData = new SocialData();
         try {
             TwitterAuthModel twitterAuthModel = loginTwitter(request);
+
+            this.saveTokenAndUserProfile(twitterAuthModel.getToken(), twitterAuthModel.getTokenSecret(), SocialNetwork.FACEBOOK);
 
             socialData = getTwitterData(twitterAuthModel);
         } catch (Exception e) {
@@ -77,6 +97,8 @@ public class SocialDataBL {
 
         String token = getYoutubeToken(code);
 
+        this.saveTokenAndUserProfile(token, null, SocialNetwork.FACEBOOK);
+
         String chanelId = getYoutubeChannelId(token);
 
         SocialData socialData = getVideosList(chanelId);
@@ -89,35 +111,7 @@ public class SocialDataBL {
         return socialData;
     }
 
-    //region PrivateMethods
 
-    private String getValueFromRequestParameter(ServletRequest request, String parameter){
-        String value = "";
-        try
-        {
-            String queryString = ((HttpServletRequest) request).getQueryString();
-            Map parameters = getQueryMap(queryString);
-            value = (String)parameters.get(parameter);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        return value;
-    }
-
-    private SocialData calculateData(JSONArray posts){
-        SocialData socialData = new SocialData();
-        try
-        {
-            socialData.setNumberOfPosts(posts.length());
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-        return socialData;
-    }
 
     //region Facebook
 
@@ -319,18 +313,7 @@ public class SocialDataBL {
                 .build();
         try {
             HttpGet request = new HttpGet("https://api.twitter.com/1.1/statuses/user_timeline.json");
-
-            // add request headers
-//            request.addHeader("custom-key", "mkyong");
             request.addHeader("Authorization", authorization);
-
-//            con.setRequestMethod("GET");
-//            con.setRequestProperty("Content-Type", "application/json");
-//            con.setRequestProperty("Authorization", authorization);
-//
-//            con.setUseCaches(false);
-//            con.setDoOutput(true);
-            // Send request
             try (CloseableHttpResponse response = httpClient.execute(request)) {
 
                 // Get HttpResponse Status
@@ -352,18 +335,6 @@ public class SocialDataBL {
                 }
 
             }
-//            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-//            wr.close();
-//            // Get Response
-//            InputStream is = con.getInputStream();
-//            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-//            StringBuilder response = new StringBuilder(); // or StringBuffer if Java version 5+
-//            String line;
-//            while ((line = rd.readLine()) != null) {
-//                response.append(line);
-//                response.append('\r');
-//            }
-//            rd.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -415,7 +386,6 @@ public class SocialDataBL {
         URL url;
         try {
             url = new URL("https://www.googleapis.com/youtube/v3/channels?access_token="+token+"&part=id&mine=true");
-//                    "&key=AIzaSyBoJZcIoxh16GxFFJqIBqpFNTb6WCbNdFk");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
 
@@ -456,8 +426,6 @@ public class SocialDataBL {
         URL url;
         SocialData socialData = new SocialData();
         try {
-//            url = new URL("https://www.googleapis.com/youtube/v3/search?key=AIzaSyBoJZcIoxh16GxFFJqIBqpFNTb6WCbNdFk&channelId=" + channelId +
-//                    "&part=snippet,id&order=date&maxResults=50");
             url = new URL("https://www.googleapis.com/youtube/v3/search?part=snippet&channelId="+ channelId +"&order=date&type=video&key=AIzaSyBoJZcIoxh16GxFFJqIBqpFNTb6WCbNdFk");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
@@ -498,7 +466,202 @@ public class SocialDataBL {
         return socialData;
     }
 
+    private void saveTokenAndUserProfile(String token, String tokenSecret, SocialNetwork socialNetwork){
+        long userId = Long.valueOf(authenticationPrincipal.getAuthentication().getPrincipal().toString()).longValue();
+        UserProfile profile = userProfileRepository.findByUserIdAndSocialNetworkId(userId, socialNetwork.ordinal());
+        if (profile == null) {
+            profile = new UserProfile();
+            profile.setUserId(userId);
+            profile.setSocialNetworkId(socialNetwork.ordinal());
+        }
+        profile.setToken(token);
+        if(tokenSecret != null){
+            profile.setToken_secret(tokenSecret);
+        }
+        userProfileRepository.save(profile);
+    }
+
+    private UserProfile getProfileData(SocialNetwork socialNetwork) {
+        URL url;
+        UserProfile userProfile = new UserProfile();
+
+        //Test
+        Configuration config = new Configuration();
+        config.setId(1);
+        Parameter urlParameter = new Parameter();
+        Type type = new Type(1, "url");
+        urlParameter.setType(type);
+        urlParameter.setValue("https://graph.facebook.com/v5.0/10218367531053241?fields=birthday,email,first_name,last_name");
+        Type typeAttr = new Type (2, "attribute");
+        Parameter birthdayParameter = new Parameter(2, typeAttr, "birthday", config.getId());
+        Parameter emailParameter = new Parameter(2, typeAttr, "email", config.getId());
+        Parameter first_name = new Parameter(2, typeAttr, "first_name", config.getId());
+        Parameter last_name = new Parameter(2, typeAttr, "last_name", config.getId());
+        LinkedList<Parameter> listaParams = new LinkedList<Parameter>();
+        listaParams.add(urlParameter);
+        listaParams.add(birthdayParameter);
+        listaParams.add(emailParameter);
+        listaParams.add(first_name);
+        listaParams.add(last_name);
+        config.setParameters(listaParams);
+
+        try {
+            String json = null;
+            for (Parameter param : config.getParameters()) {
+                if (param.getType().getName().equals("url")) {
+                    json = userProfile(param.getValue(), socialNetwork);
+                    break;
+                }
+            }
+            if(json != null) {
+                userProfile = new ObjectMapper().readValue(json, UserProfile.class);
+            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return userProfile;
+    }
+
+    private String userProfile(String configUrl, SocialNetwork socialNetwork) {
+        try {
+            long userId = Long.valueOf(authenticationPrincipal.getAuthentication().getPrincipal().toString()).longValue();
+            UserProfile profile = userProfileRepository.findByUserIdAndSocialNetworkId(userId, socialNetwork.ordinal());
+
+            URL url = new URL(configUrl);
+            switch (socialNetwork){
+                case FACEBOOK:
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                    con.setRequestMethod("GET");
+
+                    con.setRequestProperty("Content-Type", "application/json");
+
+                    con.setRequestProperty("Authorization", "Bearer " + profile.getToken());
+
+                    con.setUseCaches(false);
+                    con.setDoOutput(true);
+                    // Send request
+                    DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+                    wr.close();
+                    // Get Response
+                    InputStream is = con.getInputStream();
+                    BufferedReader rd1 = new BufferedReader(new InputStreamReader(is));
+                    StringBuilder response = new StringBuilder(); // or StringBuffer if Java version 5+
+                    String line;
+                    while ((line = rd1.readLine()) != null) {
+                        response.append(line);
+                        response.append('\r');
+                    }
+                    rd1.close();
+                    return response.toString();
+                    //return new JSONObject(response.toString());
+                case YOUTUBE:
+                    HttpURLConnection con1 = (HttpURLConnection) url.openConnection();
+                    con1.setRequestMethod("GET");
+
+                    con1.setRequestProperty("Content-Type", "application/json");
+                    con1.setRequestProperty("User-Agent", "PostmanRuntime/7.22.0");
+                    con1.setRequestProperty("Accept", "*/*");
+                    con1.setRequestProperty("Host", "www.googleapis.com");
+                    con1.setRequestProperty("Accept-Encoding", "gzip, deflate, br");
+                    con1.setRequestProperty("Connection", "keep-alive");
+                    con1.setRequestProperty("Cache-Control", "no-cache");
+                    con1.setRequestProperty("Postman-Token", "7e67689b-5579-4d12-9de9-e09c0b170f08");
+
+                    con1.setUseCaches(false);
+                    con1.setDoOutput(true);
+
+                    // Send request
+                    con1.connect();
+                    // Get Response
+                    BufferedReader rd = new BufferedReader(new InputStreamReader(url.openStream()));
+                    StringBuilder responseYoutube = new StringBuilder(); // or StringBuffer if Java version 5+
+                    String lineYoutube;
+                    while ((lineYoutube = rd.readLine()) != null) {
+                        responseYoutube.append(lineYoutube);
+                        responseYoutube.append('\r');
+                    }
+                    rd.close();
+                    String responseBody = responseYoutube.toString();
+                    return responseBody;
+                    //JSONObject jsonObject = new JSONObject(responseBody);
+                    //return jsonObject;
+                case TWITTER:
+                    String consumer_key = "cAZvSJcPSJoJFBCylBgCcO3H4";
+                    String consumer_secret = "VbHpDOo7L7qMdU5NaaK5LvyxCXcEGPrAzVrpUNtMaFNzfWZUHO";
+
+                    String authorization = new OAuth1AuthorizationHeaderBuilder()
+                            .withMethod("GET")
+                            .withURL("https://api.twitter.com/1.1/statuses/user_timeline.json")
+                            .withConsumerSecret("VbHpDOo7L7qMdU5NaaK5LvyxCXcEGPrAzVrpUNtMaFNzfWZUHO")
+                            .withParameter("oauth_consumer_key", "cAZvSJcPSJoJFBCylBgCcO3H4")
+                            .withParameter("oauth_nonce", "WmWVcny05Nb")
+                            .withParameter("oauth_token", profile.getToken())
+                            .withTokenSecret(profile.getToken_secret())
+                            .build();
+                        HttpGet request = new HttpGet("https://api.twitter.com/1.1/statuses/user_timeline.json");
+                        request.addHeader("Authorization", authorization);
+                        try (CloseableHttpResponse response2 = httpClient.execute(request)) {
+
+                            // Get HttpResponse Status
+                            System.out.println(response2.getStatusLine().toString());
+
+                            HttpEntity entity = response2.getEntity();
+                            Header headers = entity.getContentType();
+                            System.out.println(headers);
+
+                            if (entity != null) {
+                                // return it as a String
+                                String result = EntityUtils.toString(entity);
+                                System.out.println(result);
+
+                                String data = response2.toString();
+                                return result;
+                                //return new JSONObject(result);
+                            }
+
+                        }
+                        catch (Exception e) {
+                            throw e;
+                        }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     //endregion Youtube
+
+    //region PrivateMethods
+
+    private String getValueFromRequestParameter(ServletRequest request, String parameter){
+        String value = "";
+        try
+        {
+            String queryString = ((HttpServletRequest) request).getQueryString();
+            Map parameters = getQueryMap(queryString);
+            value = (String)parameters.get(parameter);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return value;
+    }
+
+    private SocialData calculateData(JSONArray posts){
+        SocialData socialData = new SocialData();
+        try
+        {
+            socialData.setNumberOfPosts(posts.length());
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        return socialData;
+    }
 
     //endregion PrivateMethods
 }
