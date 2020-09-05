@@ -18,7 +18,6 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.servlet.tags.Param;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -61,15 +60,10 @@ public class SocialDataBL {
             String token = getFacebookToken(code);
 
             this.saveTokenAndUserProfile(token, null, SocialNetwork.FACEBOOK);
-            UserProfile userProfile = this.userProfileRepository.findByUserIdAndSocialNetworkId(1, SocialNetwork.FACEBOOK.ordinal());
-
-
-            this.getProfileData(SocialNetwork.FACEBOOK);
 
             SocialData data = getFacebookData(token);
-            userProfile.setSocialData(data);
-            this.userProfileRepository.save(userProfile);
-            UserProfile userProfile1 = this.userProfileRepository.findByUserIdAndSocialNetworkId(1, SocialNetwork.FACEBOOK.ordinal());
+
+            this.saveUserProfileWithSocialData(data, SocialNetwork.FACEBOOK);
 
             return data;
         }
@@ -93,9 +87,11 @@ public class SocialDataBL {
         try {
             TwitterAuthModel twitterAuthModel = loginTwitter(request);
 
-            this.saveTokenAndUserProfile(twitterAuthModel.getToken(), twitterAuthModel.getTokenSecret(), SocialNetwork.FACEBOOK);
+            this.saveTokenAndUserProfile(twitterAuthModel.getToken(), twitterAuthModel.getTokenSecret(), SocialNetwork.TWITTER);
 
             socialData = getTwitterData(twitterAuthModel);
+
+            this.saveUserProfileWithSocialData(socialData, SocialNetwork.TWITTER);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -111,11 +107,13 @@ public class SocialDataBL {
 
         String token = getYoutubeToken(code);
 
-        this.saveTokenAndUserProfile(token, null, SocialNetwork.FACEBOOK);
+        this.saveTokenAndUserProfile(token, null, SocialNetwork.YOUTUBE);
 
         String chanelId = getYoutubeChannelId(token);
 
         SocialData socialData = getVideosList(chanelId);
+
+        this.saveUserProfileWithSocialData(socialData, SocialNetwork.YOUTUBE);
         try {
 
         } catch (Exception e) {
@@ -505,7 +503,6 @@ public class SocialDataBL {
     //region UserProfile
 
     private UserProfile getProfileData(SocialNetwork socialNetwork) {
-        URL url;
         UserProfile userProfile = new UserProfile();
 
         Configuration config = configurationRepository.findByNameAndSocialNetworkId("UserProfile", socialNetwork.ordinal());
@@ -519,6 +516,14 @@ public class SocialDataBL {
             }
             if(json != null) {
                 userProfile = new ObjectMapper().readValue(json, UserProfile.class);
+                long userId = Long.valueOf(authenticationPrincipal.getAuthentication().getPrincipal().toString()).longValue();
+                UserProfile userProfileBase = this.userProfileRepository.findByUserIdAndSocialNetworkId(userId, socialNetwork.ordinal());
+                userProfile.setId(userProfileBase.getId());
+                userProfile.setToken(userProfileBase.getToken());
+                userProfile.setToken_secret(userProfileBase.getToken_secret());
+                userProfile.setUserId(userProfileBase.getUserId());
+                userProfile.setSocialData(userProfileBase.getSocialData());
+                userProfile.setSocialNetworkId(userProfileBase.getSocialNetworkId());
             }
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -588,22 +593,20 @@ public class SocialDataBL {
                     rd.close();
                     String responseBody = responseYoutube.toString();
                     return responseBody;
-                //JSONObject jsonObject = new JSONObject(responseBody);
-                //return jsonObject;
                 case TWITTER:
                     String consumer_key = "cAZvSJcPSJoJFBCylBgCcO3H4";
                     String consumer_secret = "VbHpDOo7L7qMdU5NaaK5LvyxCXcEGPrAzVrpUNtMaFNzfWZUHO";
 
                     String authorization = new OAuth1AuthorizationHeaderBuilder()
                             .withMethod("GET")
-                            .withURL("https://api.twitter.com/1.1/statuses/user_timeline.json")
+                            .withURL(configUrl)
                             .withConsumerSecret("VbHpDOo7L7qMdU5NaaK5LvyxCXcEGPrAzVrpUNtMaFNzfWZUHO")
                             .withParameter("oauth_consumer_key", "cAZvSJcPSJoJFBCylBgCcO3H4")
                             .withParameter("oauth_nonce", "WmWVcny05Nb")
                             .withParameter("oauth_token", profile.getToken())
                             .withTokenSecret(profile.getToken_secret())
                             .build();
-                    HttpGet request = new HttpGet("https://api.twitter.com/1.1/statuses/user_timeline.json");
+                    HttpGet request = new HttpGet(configUrl);
                     request.addHeader("Authorization", authorization);
                     try (CloseableHttpResponse response2 = httpClient.execute(request)) {
 
@@ -621,7 +624,6 @@ public class SocialDataBL {
 
                             String data = response2.toString();
                             return result;
-                            //return new JSONObject(result);
                         }
 
                     }
@@ -637,6 +639,11 @@ public class SocialDataBL {
 
     //endregion UserProfile
 
+    private void saveUserProfileWithSocialData(SocialData data, SocialNetwork socialNetwork){
+        UserProfile userProfile = this.getProfileData(socialNetwork);
+        userProfile.setSocialData(data);
+        this.userProfileRepository.save(userProfile);
+    }
 
     private String getValueFromRequestParameter(ServletRequest request, String parameter){
         String value = "";
