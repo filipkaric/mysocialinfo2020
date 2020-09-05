@@ -4,6 +4,7 @@ import { LoginComponent } from './core/components/login/login.component';
 import { AuthGuard } from './core/auth/auth.guard';
 import { HomeComponent } from './core/components/home/home.component';
 import { RegisterComponent } from './core/components/register/register.component';
+import { UserProfilesComponent } from './core/components/user-profiles/user-profiles.component';
 
 
 const routes: Routes = [
@@ -33,6 +34,11 @@ const routes: Routes = [
     path: 'home/:code',
     canActivate: [AuthGuard],
     component: HomeComponent
+  },
+  {
+    path: 'user-profile',
+    canActivate: [AuthGuard],
+    component: UserProfilesComponent
   }
 ];
 

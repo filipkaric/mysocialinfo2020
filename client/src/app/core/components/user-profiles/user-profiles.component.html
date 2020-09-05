@@ -1,0 +1,72 @@
+<div>
+    <mat-toolbar><mat-icon>public</mat-icon> <span>Мој друштвени ИНФО</span>
+        <button mat-flat-button class="mat-secondary" (click)="back()">Назад</button>
+      <button mat-flat-button class="mat-secondary" style="position: absolute; right: 0;" (click)="logout()">Одјави се</button>
+    </mat-toolbar>
+    <h1 style="text-align:center" class="card-header bg-info">
+        Подаци са профила друштвених мрежа
+      </h1>
+      <div class="barsContainer" fxLayout="row wrap" fxLayoutAlign="space-evenly center">
+        <div *ngIf="numberOfPostsGraphData && numberOfPostsGraphData.length > 0">
+                <h4>
+                  Број објава по друштвеној мрежи
+                </h4>
+                    <ngx-charts-bar-vertical
+                    [view]="view"
+                    [scheme]="colorScheme"
+                    [results]="numberOfPostsGraphData"
+                    [gradient]="gradient"
+                    [xAxis]="showXAxis"
+                    [yAxis]="showYAxis"
+                    [legend]="showLegend"
+                    [showXAxisLabel]="showXAxisLabel"
+                    [showYAxisLabel]="showYAxisLabel"
+                    [xAxisLabel]="xAxisLabel"
+                    [yAxisLabel]="yAxisLabel">
+                    <!-- (select)="onSelect($event)"> -->
+                    </ngx-charts-bar-vertical>
+          </div>
+          <div *ngIf="multiGraphData && multiGraphData.length > 0">
+                <h4>
+                  Vertical Bar Chart Normalized
+                </h4>
+                <ngx-charts-bar-vertical-normalized
+                [view]="view"
+                [scheme]="colorSchemeMulti"
+                [results]="multiGraphData"
+                [gradient]="gradient"
+                [xAxis]="showXAxis"
+                [yAxis]="showYAxis"
+                [legend]="showLegend"
+                [showXAxisLabel]="showXAxisLabel"
+                [showYAxisLabel]="showYAxisLabel"
+                [xAxisLabel]="xAxisLabel"
+                [yAxisLabel]="yAxisLabel">
+                <!-- (select)="onSelect($event)"> -->
+                </ngx-charts-bar-vertical-normalized>
+          </div>
+          
+          <div *ngIf="multiGraphData && multiGraphData.length > 0">
+            <h4>
+              Stacked Vertical Bar Chart
+            </h4>
+            <ngx-charts-bar-vertical-stacked
+            [view]="view"
+            [scheme]="colorSchemeMulti"
+            [results]="multiGraphData"
+            [gradient]="gradient"
+            [xAxis]="showXAxis"
+            [yAxis]="showYAxis"
+            [legend]="showLegend"
+            [showXAxisLabel]="showXAxisLabel"
+            [showYAxisLabel]="showYAxisLabel"
+            [xAxisLabel]="xAxisLabel"
+            [yAxisLabel]="yAxisLabel"
+            (select)="onSelect($event)">
+            </ngx-charts-bar-vertical-stacked>
+          </div>
+      </div>
+</div>
+<footer class="footer">
+  © 2020 Филип Карић 2017/3707
+</footer>

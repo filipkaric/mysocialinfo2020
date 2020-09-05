@@ -25,8 +25,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -59,10 +61,15 @@ public class SocialDataBL {
             String token = getFacebookToken(code);
 
             this.saveTokenAndUserProfile(token, null, SocialNetwork.FACEBOOK);
+            UserProfile userProfile = this.userProfileRepository.findByUserIdAndSocialNetworkId(1, SocialNetwork.FACEBOOK.ordinal());
+
 
             this.getProfileData(SocialNetwork.FACEBOOK);
 
             SocialData data = getFacebookData(token);
+            userProfile.setSocialData(data);
+            this.userProfileRepository.save(userProfile);
+            UserProfile userProfile1 = this.userProfileRepository.findByUserIdAndSocialNetworkId(1, SocialNetwork.FACEBOOK.ordinal());
 
             return data;
         }
@@ -489,6 +496,14 @@ public class SocialDataBL {
         userProfileRepository.save(profile);
     }
 
+
+
+    //endregion Youtube
+
+    //region PrivateMethods
+
+    //region UserProfile
+
     private UserProfile getProfileData(SocialNetwork socialNetwork) {
         URL url;
         UserProfile userProfile = new UserProfile();
@@ -543,7 +558,7 @@ public class SocialDataBL {
                     }
                     rd1.close();
                     return response.toString();
-                    //return new JSONObject(response.toString());
+                //return new JSONObject(response.toString());
                 case YOUTUBE:
                     HttpURLConnection con1 = (HttpURLConnection) url.openConnection();
                     con1.setRequestMethod("GET");
@@ -573,8 +588,8 @@ public class SocialDataBL {
                     rd.close();
                     String responseBody = responseYoutube.toString();
                     return responseBody;
-                    //JSONObject jsonObject = new JSONObject(responseBody);
-                    //return jsonObject;
+                //JSONObject jsonObject = new JSONObject(responseBody);
+                //return jsonObject;
                 case TWITTER:
                     String consumer_key = "cAZvSJcPSJoJFBCylBgCcO3H4";
                     String consumer_secret = "VbHpDOo7L7qMdU5NaaK5LvyxCXcEGPrAzVrpUNtMaFNzfWZUHO";
@@ -588,31 +603,31 @@ public class SocialDataBL {
                             .withParameter("oauth_token", profile.getToken())
                             .withTokenSecret(profile.getToken_secret())
                             .build();
-                        HttpGet request = new HttpGet("https://api.twitter.com/1.1/statuses/user_timeline.json");
-                        request.addHeader("Authorization", authorization);
-                        try (CloseableHttpResponse response2 = httpClient.execute(request)) {
+                    HttpGet request = new HttpGet("https://api.twitter.com/1.1/statuses/user_timeline.json");
+                    request.addHeader("Authorization", authorization);
+                    try (CloseableHttpResponse response2 = httpClient.execute(request)) {
 
-                            // Get HttpResponse Status
-                            System.out.println(response2.getStatusLine().toString());
+                        // Get HttpResponse Status
+                        System.out.println(response2.getStatusLine().toString());
 
-                            HttpEntity entity = response2.getEntity();
-                            Header headers = entity.getContentType();
-                            System.out.println(headers);
+                        HttpEntity entity = response2.getEntity();
+                        Header headers = entity.getContentType();
+                        System.out.println(headers);
 
-                            if (entity != null) {
-                                // return it as a String
-                                String result = EntityUtils.toString(entity);
-                                System.out.println(result);
+                        if (entity != null) {
+                            // return it as a String
+                            String result = EntityUtils.toString(entity);
+                            System.out.println(result);
 
-                                String data = response2.toString();
-                                return result;
-                                //return new JSONObject(result);
-                            }
-
+                            String data = response2.toString();
+                            return result;
+                            //return new JSONObject(result);
                         }
-                        catch (Exception e) {
-                            throw e;
-                        }
+
+                    }
+                    catch (Exception e) {
+                        throw e;
+                    }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -620,9 +635,8 @@ public class SocialDataBL {
         return null;
     }
 
-    //endregion Youtube
+    //endregion UserProfile
 
-    //region PrivateMethods
 
     private String getValueFromRequestParameter(ServletRequest request, String parameter){
         String value = "";
@@ -665,7 +679,19 @@ public class SocialDataBL {
             LinkedList<String> list = new LinkedList<String>();
             for (int i=0; i<posts.length(); i++) {
                 JSONObject object = posts.getJSONObject(i);
-                LocalDate inputDate = LocalDate.parse(object.getString(key).substring(0, 10));
+                LocalDate inputDate = null;
+                switch (socialNetwork){
+                    case FACEBOOK:
+                    case YOUTUBE:
+                        inputDate = LocalDate.parse(object.getString(key).substring(0, 10));
+                        break;
+                    case TWITTER:
+                        final String TWITTER="EEE MMM dd HH:mm:ss ZZZZZ yyyy";
+                        SimpleDateFormat sf = new SimpleDateFormat(TWITTER);
+                        sf.setLenient(true);
+                        inputDate = sf.parse(object.getString(key)).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                        break;
+                }
                 if(inputDate.getMonth() == currentMonth.getMonth()){
                     ++numberOfPostsCurrentMonth;
                 } else if(inputDate.getMonth() == lastMonth.getMonth()){

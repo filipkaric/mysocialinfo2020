@@ -19,13 +19,15 @@ import { HomeComponent } from './core/components/home/home.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { RegisterComponent } from './core/components/register/register.component';
+import { UserProfilesComponent } from './core/components/user-profiles/user-profiles.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     HomeComponent,
-    RegisterComponent
+    RegisterComponent,
+    UserProfilesComponent
   ],
   imports: [
     BrowserModule,

@@ -2,10 +2,7 @@ package mysocialinfo.mysocialinfo.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -15,6 +12,10 @@ public class UserProfile {
     @JsonIgnore
     private long id;
     private long userId;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "socialData_id", referencedColumnName = "id")
+    private SocialData socialData;
 
     private String first_name;
     private String last_name;
@@ -129,5 +130,13 @@ public class UserProfile {
 
     public void setToken_secret(String token_secret) {
         this.token_secret = token_secret;
+    }
+
+    public SocialData getSocialData() {
+        return socialData;
+    }
+
+    public void setSocialData(SocialData socialData) {
+        this.socialData = socialData;
     }
 }

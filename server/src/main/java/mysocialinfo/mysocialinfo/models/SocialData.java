@@ -3,7 +3,14 @@ package mysocialinfo.mysocialinfo.models;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+
+@Entity
 public class SocialData extends BaseEntity {
+
+    @OneToOne(mappedBy = "socialData")
+    private UserProfile userProfile;
 
     private String socialNetwork;
     private int numberOfPosts;
