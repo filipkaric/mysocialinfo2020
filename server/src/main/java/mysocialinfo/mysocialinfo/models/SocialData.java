@@ -3,7 +3,7 @@ package mysocialinfo.mysocialinfo.models;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class SocialData {
+public class SocialData extends BaseEntity {
 
     private String socialNetwork;
     private int numberOfPosts;

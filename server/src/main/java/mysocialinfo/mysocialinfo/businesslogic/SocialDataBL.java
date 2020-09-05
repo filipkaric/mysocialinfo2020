@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import mysocialinfo.mysocialinfo.config.AuthenticationPrincipal;
 import mysocialinfo.mysocialinfo.helpers.OAuth1AuthorizationHeaderBuilder;
 import mysocialinfo.mysocialinfo.models.*;
+import mysocialinfo.mysocialinfo.repository.ConfigurationRepository;
 import mysocialinfo.mysocialinfo.repository.UserProfileRepository;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -38,6 +39,8 @@ public class SocialDataBL {
 
     @Autowired
     UserProfileRepository userProfileRepository;
+    @Autowired
+    ConfigurationRepository configurationRepository;
     @Autowired
     private AuthenticationPrincipal authenticationPrincipal;
 
@@ -490,30 +493,11 @@ public class SocialDataBL {
         URL url;
         UserProfile userProfile = new UserProfile();
 
-        //Test
-        Configuration config = new Configuration();
-        config.setId(1);
-        Parameter urlParameter = new Parameter();
-        Type type = new Type(1, "url");
-        urlParameter.setType(type);
-        urlParameter.setValue("https://graph.facebook.com/v5.0/10218367531053241?fields=birthday,email,first_name,last_name");
-        Type typeAttr = new Type (2, "attribute");
-        Parameter birthdayParameter = new Parameter(2, typeAttr, "birthday", config.getId());
-        Parameter emailParameter = new Parameter(2, typeAttr, "email", config.getId());
-        Parameter first_name = new Parameter(2, typeAttr, "first_name", config.getId());
-        Parameter last_name = new Parameter(2, typeAttr, "last_name", config.getId());
-        LinkedList<Parameter> listaParams = new LinkedList<Parameter>();
-        listaParams.add(urlParameter);
-        listaParams.add(birthdayParameter);
-        listaParams.add(emailParameter);
-        listaParams.add(first_name);
-        listaParams.add(last_name);
-        config.setParameters(listaParams);
-
+        Configuration config = configurationRepository.findByNameAndSocialNetworkId("UserProfile", socialNetwork.ordinal());
         try {
             String json = null;
             for (Parameter param : config.getParameters()) {
-                if (param.getType().getName().equals("url")) {
+                if (param.getType().getName().equals("URL")) {
                     json = userProfile(param.getValue(), socialNetwork);
                     break;
                 }

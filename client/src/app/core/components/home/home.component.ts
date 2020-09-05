@@ -46,122 +46,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     domain: ['#3B5998', '#00ACEE', '#FF0000', '#FF7F50', '#90EE90', '#9370DB']
   };
 
+  colorSchemeMulti = {
+    domain: ['#FF7F50', '#90EE90', '#9370DB']
+  };
+
   //pie
   showLabels = true;
-
-  // data goes here
-  public single = [
-    {
-      "name": "China",
-      "value": 2243772
-    },
-    {
-      "name": "USA",
-      "value": 1126000
-    },
-    {
-      "name": "Norway",
-      "value": 296215
-    },
-    {
-      "name": "Japan",
-      "value": 257363
-    },
-    {
-      "name": "Germany",
-      "value": 196750
-    },
-    {
-      "name": "France",
-      "value": 204617
-    }
-  ];
-
-  public multi = [
-    {
-      "name": "China",
-      "series": [
-        {
-          "name": "2018",
-          "value": 2243772
-        },
-        {
-          "name": "2017",
-          "value": 1227770
-        }
-      ]
-    },
-
-    {
-      "name": "USA",
-      "series": [
-        {
-          "name": "2018",
-          "value": 1126000
-        },
-        {
-          "name": "2017",
-          "value": 764666
-        }
-      ]
-    },
-
-    {
-      "name": "Norway",
-      "series": [
-        {
-          "name": "2018",
-          "value": 296215
-        },
-        {
-          "name": "2017",
-          "value": 209122
-        }
-      ]
-    },
-
-    {
-      "name": "Japan",
-      "series": [
-        {
-          "name": "2018",
-          "value": 257363
-        },
-        {
-          "name": "2017",
-          "value": 205350
-        }
-      ]
-    },
-
-    {
-      "name": "Germany",
-      "series": [
-        {
-          "name": "2018",
-          "value": 196750
-        },
-        {
-          "name": "2017",
-          "value": 129246
-        }
-      ]
-    },
-
-    {
-      "name": "France",
-      "series": [
-        {
-          "name": "2018",
-          "value": 204617
-        },
-        {
-          "name": "2017",
-          "value": 149797
-        }
-      ]
-    }
-  ];
 
   //Charts
 
@@ -211,6 +101,27 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
       this.numberOfPostsGraphData.push(data);
       this.numberOfPostsGraphData = [...this.numberOfPostsGraphData];
+      const multiData = <MultiGraphData>{
+        name: result.socialNetwork,
+        series: []
+      }
+      const regularData = <GraphData>{
+        name: 'Тренутни месец',
+        value: result.numberOfPostsCurrentMonth
+      }
+      const regularData1 = <GraphData>{
+        name: 'Претходни месец',
+        value: result.numberOfPostsLastMonth
+      }
+      const regularData2 = <GraphData>{
+        name: 'Пре два месеца',
+        value: result.numberOfPostsLastMonth
+      }
+      multiData.series.push(regularData);
+      multiData.series.push(regularData1);
+      multiData.series.push(regularData2);
+      this.multiGraphData.push(multiData);
+      this.multiGraphData = [...this.multiGraphData];
       this.changeDetectorRef.detectChanges();
       }
     });
@@ -238,37 +149,37 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.changeDetectorRef.detectChanges();
       }
     });
-    const multiData = <MultiGraphData>{
-      name: 'China',
-      series: []
-    }
-    const regularData = <GraphData>{
-      name: '2018',
-      value: 2243772
-    }
-    const regularData1 = <GraphData>{
-      name: '2017',
-      value: 1243772
-    }
-    multiData.series.push(regularData);
-    multiData.series.push(regularData1);
-    this.multiGraphData.push(multiData);
-    const multiData1 = <MultiGraphData>{
-      name: 'USA',
-      series: []
-    }
-    const regularData2 = <GraphData>{
-      name: '2018',
-      value: 3243772
-    }
-    const regularData3 = <GraphData>{
-      name: '2017',
-      value: 2243772
-    }
-    multiData1.series.push(regularData2);
-    multiData1.series.push(regularData3);
-    this.multiGraphData.push(multiData1);
-    this.multiGraphData = [...this.multiGraphData];
+    // const multiData = <MultiGraphData>{
+    //   name: 'China',
+    //   series: []
+    // }
+    // const regularData = <GraphData>{
+    //   name: '2018',
+    //   value: 2243772
+    // }
+    // const regularData1 = <GraphData>{
+    //   name: '2017',
+    //   value: 1243772
+    // }
+    // multiData.series.push(regularData);
+    // multiData.series.push(regularData1);
+    // this.multiGraphData.push(multiData);
+    // const multiData1 = <MultiGraphData>{
+    //   name: 'USA',
+    //   series: []
+    // }
+    // const regularData2 = <GraphData>{
+    //   name: '2018',
+    //   value: 3243772
+    // }
+    // const regularData3 = <GraphData>{
+    //   name: '2017',
+    //   value: 2243772
+    // }
+    // multiData1.series.push(regularData2);
+    // multiData1.series.push(regularData3);
+    // this.multiGraphData.push(multiData1);
+    // this.multiGraphData = [...this.multiGraphData];
   }
 
   facebookLogin() {

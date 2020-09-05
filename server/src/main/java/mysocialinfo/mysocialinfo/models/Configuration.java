@@ -1,49 +1,39 @@
 package mysocialinfo.mysocialinfo.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import java.util.LinkedList;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+import javax.persistence.*;
+import java.util.LinkedList;
+import java.util.List;
+
+@Getter
+@Setter
+@EqualsAndHashCode
 @Entity
-public class Configuration {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    private LinkedList<Parameter> parameters;
+public class Configuration extends BaseEntity {
+
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "socialnetworkid")
+    private long socialNetworkId;
+
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            mappedBy = "configuration",
+            fetch = FetchType.EAGER,
+            orphanRemoval = true
+    )
+    private List<Parameter> parameters;
 
     public Configuration() {
     }
 
-    public Configuration(long id, LinkedList<Parameter> parameters, String name) {
-        this.id = id;
-        this.parameters = parameters;
+    public Configuration(String name, long socialNetworkId) {
         this.name = name;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public LinkedList<Parameter> getParameters() {
-        return parameters;
-    }
-
-    public void setParameters(LinkedList<Parameter> parameters) {
-        this.parameters = parameters;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+        this.socialNetworkId = socialNetworkId;
     }
 }
