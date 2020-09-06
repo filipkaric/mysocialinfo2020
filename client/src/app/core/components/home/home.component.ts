@@ -8,6 +8,7 @@ import { SocialData } from '../../models/social-data.model';
 import { GraphData } from '../../models/graph-data.model';
 import { MultiGraphData } from '../../models/multi-graph-data.model';
 import { AuthService } from '../../auth/auth.service';
+import { SocialNetwork } from '../../models/social-network.enum';
 
 @Component({
   selector: 'app-home',
@@ -212,6 +213,13 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   userProfiles(){
     this.router.navigate(['/user-profile'])
+  }
+
+  historyData(){
+    this.service.getSocialData(SocialNetwork.FACEBOOK).subscribe(result => {
+    });
+    // this.twitterData$ = this.service.getSocialData(SocialNetwork.TWITTER);
+    // this.youtubeData$ = this.service.getSocialData(SocialNetwork.YOUTUBE);
   }
 
   ngOnDestroy() {

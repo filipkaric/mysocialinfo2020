@@ -5,6 +5,8 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { LoginData } from '../models/login-data.model';
 import { SocialData } from '../models/social-data.model';
+import { UserProfile } from '../models/user-profile-model';
+import { SocialNetwork } from '../models/social-network.enum';
 
 const httpOptions = {
     headers: new HttpHeaders({
@@ -45,5 +47,14 @@ export class AuthService {
 
     logout(): Observable<boolean> {
       return this.http.post<boolean>(this.webApiUrl + "test", '');
+    }
+
+    getUserProfile(socialNetwork: number): Observable<UserProfile>{
+      return this.http.get<UserProfile>(this.webApiUrl + "getUserProfile?socialNetwork=" + socialNetwork.toString());
+    }
+
+    getSocialData(socialNetwork: number): Observable<SocialData>{
+      debugger
+      return this.http.get<SocialData>(this.webApiUrl + "getSocialData?socialNetwork=" + socialNetwork.toString());
     }
 }

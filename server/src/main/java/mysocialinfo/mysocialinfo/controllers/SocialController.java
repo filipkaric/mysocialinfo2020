@@ -1,9 +1,7 @@
 package mysocialinfo.mysocialinfo.controllers;
 
 import mysocialinfo.mysocialinfo.businesslogic.SocialDataBL;
-import mysocialinfo.mysocialinfo.models.LoginData;
-import mysocialinfo.mysocialinfo.models.SocialData;
-import mysocialinfo.mysocialinfo.models.User;
+import mysocialinfo.mysocialinfo.models.*;
 import mysocialinfo.mysocialinfo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -54,5 +52,15 @@ public class SocialController {
         if (!(request instanceof HttpServletRequest))
             return null;
         return socialDataBL.YoutubeLogin(request);
+    }
+
+    @RequestMapping("/getUserProfile")
+    public UserProfile getUserProfile(int socialNetwork){
+        return socialDataBL.getUserProfile(SocialNetwork.values()[socialNetwork]);
+    }
+
+    @RequestMapping("/getSocialData")
+    public SocialData getSocialData(int socialNetwork){
+        return socialDataBL.getSocialData(SocialNetwork.values()[socialNetwork]);
     }
 }

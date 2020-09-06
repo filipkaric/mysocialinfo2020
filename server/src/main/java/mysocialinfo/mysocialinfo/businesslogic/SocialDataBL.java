@@ -123,6 +123,28 @@ public class SocialDataBL {
         return socialData;
     }
 
+    public UserProfile getUserProfile(SocialNetwork socialNetwork){
+        UserProfile userProfile = null;
+        try{
+            long userId = Long.valueOf(authenticationPrincipal.getAuthentication().getPrincipal().toString()).longValue();
+            userProfile = this.userProfileRepository.findByUserIdAndSocialNetworkId(userId, socialNetwork.ordinal());
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return userProfile;
+    }
+
+    public SocialData getSocialData(SocialNetwork socialNetwork){
+        UserProfile userProfile = null;
+        try{
+            long userId = Long.valueOf(authenticationPrincipal.getAuthentication().getPrincipal().toString()).longValue();
+            userProfile = this.userProfileRepository.findByUserIdAndSocialNetworkId(userId, socialNetwork.ordinal());
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return userProfile.getSocialData();
+    }
+
 
 
     //region Facebook
