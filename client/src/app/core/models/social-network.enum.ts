@@ -1,5 +1,5 @@
 export enum SocialNetwork {
     FACEBOOK = 0,
-    TWITTER,
-    YOUTUBE
+    YOUTUBE = 1,
+    TWITTER = 2
   }

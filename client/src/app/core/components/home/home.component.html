@@ -20,7 +20,7 @@
   <div class="barsContainer" fxLayout="row wrap" fxLayoutAlign="space-evenly center">
     <div *ngIf="numberOfPostsGraphData && numberOfPostsGraphData.length > 0">
             <h4>
-              Број објава по друштвеној мрежи
+              Укупан број објава по друштвеној мрежи
             </h4>
                 <ngx-charts-bar-vertical
                 [view]="view"
@@ -39,7 +39,7 @@
       </div>
       <div *ngIf="multiGraphData && multiGraphData.length > 0">
             <h4>
-              Vertical Bar Chart Normalized
+              Број објава у последња 3 месеца (нормализовано)
             </h4>
             <ngx-charts-bar-vertical-normalized
             [view]="view"
@@ -59,7 +59,7 @@
       
       <div *ngIf="multiGraphData && multiGraphData.length > 0">
         <h4>
-          Stacked Vertical Bar Chart
+          Број објава у последња 3 месеца
         </h4>
         <ngx-charts-bar-vertical-stacked
         [view]="view"
