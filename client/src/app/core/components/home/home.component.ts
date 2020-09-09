@@ -116,7 +116,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
       const regularData2 = <GraphData>{
         name: 'Пре два месеца',
-        value: result.numberOfPostsLastMonth
+        value: result.numberOfPostsTwoMonthsAgo
       }
       multiData.series.push(regularData);
       multiData.series.push(regularData1);
@@ -149,7 +149,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
       const regularData2 = <GraphData>{
         name: 'Пре два месеца',
-        value: result.numberOfPostsLastMonth
+        value: result.numberOfPostsTwoMonthsAgo
       }
       multiData.series.push(regularData);
       multiData.series.push(regularData1);
@@ -182,7 +182,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
       const regularData2 = <GraphData>{
         name: 'Пре два месеца',
-        value: result.numberOfPostsLastMonth
+        value: result.numberOfPostsTwoMonthsAgo
       }
       multiData.series.push(regularData);
       multiData.series.push(regularData1);
@@ -216,10 +216,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   historyData(){
-    this.service.getSocialData(SocialNetwork.FACEBOOK).subscribe(result => {
-    });
-    // this.twitterData$ = this.service.getSocialData(SocialNetwork.TWITTER);
-    // this.youtubeData$ = this.service.getSocialData(SocialNetwork.YOUTUBE);
+    this.store.dispatch(new authActions.SocialHistoryDataAction(SocialNetwork.FACEBOOK));
+    this.store.dispatch(new authActions.SocialHistoryDataAction(SocialNetwork.TWITTER));
+    this.store.dispatch(new authActions.SocialHistoryDataAction(SocialNetwork.YOUTUBE));
   }
 
   ngOnDestroy() {

@@ -37,6 +37,11 @@ export class LoginTwitter {
     constructor( public verifier: String, public token: String ){} 
 }
 
+export class SocialHistoryDataAction {
+    static type = '[Auth] SocialHistoryDataAction';
+    constructor( public socialNetwork: number ){} 
+}
+
 export class LogoutAction{
     static type = '[Auth] Logout';
     constructor () { }

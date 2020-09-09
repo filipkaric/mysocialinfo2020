@@ -118,6 +118,38 @@ export class AuthState {
         )
     }
 
+    @Action(authActions.SocialHistoryDataAction)
+    socialHistory(ctx: StateContext<AuthStateModel>, action: authActions.SocialHistoryDataAction) {
+        if(action.socialNetwork === 0) {
+            return this.authService.getSocialData(action.socialNetwork).pipe(
+                tap((facebookData: SocialData) => {
+                    ctx.patchState({facebookData})
+                }),
+                catchError(error => {
+                    return ctx.dispatch(new authActions.LoginFailedAction(error))
+                })
+            )
+        } else if(action.socialNetwork === 1) {
+            return this.authService.getSocialData(action.socialNetwork).pipe(
+            tap((youtubeData: SocialData) => {
+                ctx.patchState({youtubeData})
+            }),
+            catchError(error => {
+                return ctx.dispatch(new authActions.LoginFailedAction(error))
+            })
+        )
+        } else if(action.socialNetwork === 2){
+            return this.authService.getSocialData(action.socialNetwork).pipe(
+                tap((twitterData: SocialData) => {
+                    ctx.patchState({twitterData})
+                }),
+                catchError(error => {
+                    return ctx.dispatch(new authActions.LoginFailedAction(error))
+                })
+            )
+        }
+    }
+
     @Action(authActions.LogoutAction)
     logout(ctx: StateContext<AuthStateModel>, action: authActions.LogoutAction) {
         return this.authService.logout().pipe(

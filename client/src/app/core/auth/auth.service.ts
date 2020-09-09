@@ -54,7 +54,6 @@ export class AuthService {
     }
 
     getSocialData(socialNetwork: number): Observable<SocialData>{
-      debugger
       return this.http.get<SocialData>(this.webApiUrl + "getSocialData?socialNetwork=" + socialNetwork.toString());
     }
 }
