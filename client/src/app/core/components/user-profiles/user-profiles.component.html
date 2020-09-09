@@ -7,9 +7,9 @@
         Подаци са профила друштвених мрежа
       </h1>
       <div fxLayout="row wrap" fxLayoutAlign="space-evenly center">
-        <div *ngIf="userProfileFacebook">
+        <div fxFlex="25" *ngIf="userProfileFacebook">
           <form class="full-width" [formGroup]="formFacebook">
-            <h4>
+            <h4 style="color: #3B5998">
               Фејсбук
             </h4>
             <div class="">
@@ -50,9 +50,9 @@
             </div>
             </form>
           </div>
-          <div *ngIf="userProfileTwitter">
+          <div fxFlex="25" *ngIf="userProfileTwitter">
             <form [formGroup]="formTwitter">
-              <h4>
+              <h4 style="color: #00ACEE">
                 Твитер
               </h4>
               <div class="">
@@ -94,9 +94,9 @@
               </form>
           </div>
           
-          <div *ngIf="userProfileYoutube">
+          <div fxFlex="25" *ngIf="userProfileYoutube">
             <form [formGroup]="formYoutube">
-              <h4>
+              <h4 style="color: #FF0000">
                 Јутјуб
               </h4>
               <div class="">

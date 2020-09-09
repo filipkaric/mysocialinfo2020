@@ -48,7 +48,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   };
 
   colorSchemeMulti = {
-    domain: ['#FF7F50', '#90EE90', '#9370DB']
+    domain: ['#9cc2ff', '#0062ff', '#002a6e']
   };
 
   //pie
