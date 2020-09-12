@@ -29,6 +29,10 @@ export class AuthService {
         return this.http.post<User>(this.webApiUrl + "login", loginData, httpOptions);
     }
 
+    register(user: User): Observable<User> { 
+      return this.http.post<User>(this.webApiUrl + "save", user, httpOptions);
+    }
+
     facebookLogin(code: String): Observable<SocialData> {
       return this.http.get<SocialData>(this.webApiUrl + "facebook?code=" + code);
     }

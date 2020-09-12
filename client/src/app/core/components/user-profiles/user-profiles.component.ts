@@ -4,6 +4,8 @@ import { AuthService } from '../../auth/auth.service';
 import { UserProfile } from '../../models/user-profile-model';
 import { SocialNetwork } from '../../models/social-network.enum';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Store } from '@ngxs/store';
+import * as authActions from '../../auth/auth.actions';
 
 @Component({
   selector: 'app-user-profiles',
@@ -24,7 +26,8 @@ export class UserProfilesComponent implements OnInit {
     private router: Router,
     private authService: AuthService,
     private formBuilder: FormBuilder,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private store: Store
   ) { 
     this.formFacebook = formBuilder.group({
       first_name:[this.userProfileFacebook.first_name],
@@ -82,6 +85,10 @@ export class UserProfilesComponent implements OnInit {
       }, 500
       )
     });
+  }
+
+  logout(){
+    this.store.dispatch(new authActions.LogoutAction());
   }
 
   back() {

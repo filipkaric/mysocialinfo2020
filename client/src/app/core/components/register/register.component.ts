@@ -6,6 +6,7 @@ import * as authActions from '../../auth/auth.actions';
 import { AuthState } from '../../auth/auth.state';
 import { Observable } from 'rxjs';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -21,14 +22,24 @@ export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
 
   constructor(
-    private store: Store
+    private store: Store,
+    private router: Router
   ) { }
 
   login() {
-    const username = this.registerForm.get('username').value;
-    const password = this.registerForm.get('username').value;
-    let loginData = <LoginData>{ username: username, password: password};
-    this.store.dispatch(new authActions.LoginUsernamePasswordAction(loginData));
+    // const username = this.registerForm.get('username').value;
+    const password = this.registerForm.get('password').value;
+    const email = this.registerForm.get('email').value;
+    const name = this.registerForm.get('name').value;
+    let user = <User>{};
+    user.email = email;
+    user.name = name;
+    user.password = password;
+    this.store.dispatch(new authActions.RegisterUserAction(user));
+  }
+
+  back() {
+    this.router.navigate(['/'])
   }
 
   ngOnInit() {

@@ -42,6 +42,11 @@ export class SocialHistoryDataAction {
     constructor( public socialNetwork: number ){} 
 }
 
+export class RegisterUserAction {
+    static type = '[Auth] Login by username and password';
+    constructor( public user: User) { }
+}
+
 export class LogoutAction{
     static type = '[Auth] Logout';
     constructor () { }

@@ -18,14 +18,21 @@ public class UserController {
     @Autowired
     UserRepository userRepository;
 
-    @RequestMapping("/save")
-    public String Save(){
-        User ulogovanKorisnik = new User();
-        ulogovanKorisnik.setFirstname("Filip");
-        ulogovanKorisnik.setLastname("Karic");
-        ulogovanKorisnik.setEmail("kfilip94@gmail.com");
-        userRepository.save(ulogovanKorisnik);
-        return "facebookAccessToken";
+    @RequestMapping(path = "/save", method = RequestMethod.POST)
+    public String Save(@RequestBody User user){
+        try {
+            User userBase = this.userRepository.findByEmail(user.getEmail());
+            if (userBase == null) {
+                userRepository.save(user);
+                return "Успешно креиран корисник";
+            } else {
+                return "Корисничко име је заузето";
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            return  "Грешка при креирању корисника";
+        }
     }
 
     @RequestMapping(path = "/register", method = RequestMethod.POST)

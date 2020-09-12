@@ -217,8 +217,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   historyData(){
     this.store.dispatch(new authActions.SocialHistoryDataAction(SocialNetwork.FACEBOOK));
-    this.store.dispatch(new authActions.SocialHistoryDataAction(SocialNetwork.TWITTER));
     this.store.dispatch(new authActions.SocialHistoryDataAction(SocialNetwork.YOUTUBE));
+    this.store.dispatch(new authActions.SocialHistoryDataAction(SocialNetwork.TWITTER));
   }
 
   ngOnDestroy() {

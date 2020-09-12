@@ -150,6 +150,17 @@ export class AuthState {
         }
     }
 
+    @Action(authActions.RegisterUserAction)
+    register(ctx: StateContext<AuthStateModel>, action: authActions.RegisterUserAction) {
+        return this.authService.register(action.user).pipe(
+            tap((user: User) => {
+            }),
+            catchError(error => {
+                return ctx.dispatch(new authActions.LoginFailedAction(error))
+            })
+        )
+    }
+
     @Action(authActions.LogoutAction)
     logout(ctx: StateContext<AuthStateModel>, action: authActions.LogoutAction) {
         return this.authService.logout().pipe(
