@@ -6,6 +6,9 @@ import { SocialNetwork } from '../../models/social-network.enum';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngxs/store';
 import * as authActions from '../../auth/auth.actions';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
+import { KeyValue } from '../../models/key-value.model';
 
 @Component({
   selector: 'app-user-profiles',
@@ -17,6 +20,11 @@ export class UserProfilesComponent implements OnInit {
   userProfileFacebook: UserProfile = <UserProfile>{};
   userProfileYoutube: UserProfile = <UserProfile>{};
   userProfileTwitter: UserProfile = <UserProfile>{};
+  private webApiUrl = `${environment.webApiUrl}`;
+  facebookProfileValues: KeyValue[] = [];
+  twitterProfileValues: KeyValue[] = [];
+  youtubeProfileValues: KeyValue[] = [];
+
 
   formFacebook: FormGroup;
   formTwitter: FormGroup;
@@ -27,8 +35,9 @@ export class UserProfilesComponent implements OnInit {
     private authService: AuthService,
     private formBuilder: FormBuilder,
     private changeDetectorRef: ChangeDetectorRef,
-    private store: Store
-  ) { 
+    private store: Store,
+    private http: HttpClient
+  ) {
     this.formFacebook = formBuilder.group({
       first_name:[this.userProfileFacebook.first_name],
       last_name:[this.userProfileFacebook.last_name],
@@ -59,32 +68,42 @@ export class UserProfilesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.authService.getUserProfile(SocialNetwork.FACEBOOK).subscribe(result => {
-      this.userProfileFacebook = result;
-      setTimeout(() => {
-        this.formFacebook.patchValue(this.userProfileFacebook),
-        this.changeDetectorRef.detectChanges();
-      }, 500
-      )
-      
-
-    });
-    this.authService.getUserProfile(SocialNetwork.YOUTUBE).subscribe(result => {
-      this.userProfileYoutube = result;
-      setTimeout(() => {
-        this.formYoutube.patchValue(this.userProfileYoutube),
-        this.changeDetectorRef.detectChanges();
-      }, 500
-      )
-    });
-    this.authService.getUserProfile(SocialNetwork.TWITTER).subscribe(result => {
-      this.userProfileTwitter = result;
-      setTimeout(() => {
-        this.formTwitter.patchValue(this.userProfileTwitter),
-        this.changeDetectorRef.detectChanges();
-      }, 500
-      )
-    });
+    this.http.get<UserProfile>(this.webApiUrl + "getUserProfileAsString?socialNetwork=" + SocialNetwork.FACEBOOK.toString()).subscribe(result => {
+        for(var key in result) {
+          var value = result[key];
+          let keyValue = <KeyValue>{
+            name: key,
+            value: value
+          };
+          this.facebookProfileValues.push(keyValue);
+          }
+          this.facebookProfileValues = [...this.facebookProfileValues];
+        }
+      );
+    this.http.get<UserProfile>(this.webApiUrl + "getUserProfileAsString?socialNetwork=" + SocialNetwork.TWITTER.toString()).subscribe(result => {
+        for(var key in result) {
+          var value = result[key];
+          let keyValue = <KeyValue>{
+            name: key,
+            value: value
+          };
+          this.twitterProfileValues.push(keyValue);
+          }
+          this.twitterProfileValues = [...this.twitterProfileValues];
+        }
+      );
+      this.http.get<UserProfile>(this.webApiUrl + "getUserProfileAsString?socialNetwork=" + SocialNetwork.YOUTUBE.toString()).subscribe(result => {
+        for(var key in result) {
+          var value = result[key];
+          let keyValue = <KeyValue>{
+            name: key,
+            value: value
+          };
+          this.youtubeProfileValues.push(keyValue);
+          }
+          this.youtubeProfileValues = [...this.youtubeProfileValues];
+        }
+      );
   }
 
   logout(){

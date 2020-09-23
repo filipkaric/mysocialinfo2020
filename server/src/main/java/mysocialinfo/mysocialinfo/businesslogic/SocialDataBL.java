@@ -63,7 +63,7 @@ public class SocialDataBL {
 
             SocialData data = getFacebookData(token);
 
-            this.saveUserProfileWithSocialData(data, SocialNetwork.FACEBOOK);
+//            this.saveUserProfileWithSocialData(data, SocialNetwork.FACEBOOK);
 
             return data;
         }
@@ -91,7 +91,7 @@ public class SocialDataBL {
 
             socialData = getTwitterData(twitterAuthModel);
 
-            this.saveUserProfileWithSocialData(socialData, SocialNetwork.TWITTER);
+            //this.saveUserProfileWithSocialData(socialData, SocialNetwork.TWITTER);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -113,7 +113,7 @@ public class SocialDataBL {
 
         SocialData socialData = getVideosList(chanelId);
 
-        this.saveUserProfileWithSocialData(socialData, SocialNetwork.YOUTUBE);
+        //this.saveUserProfileWithSocialData(socialData, SocialNetwork.YOUTUBE);
         try {
 
         } catch (Exception e) {
@@ -134,6 +134,16 @@ public class SocialDataBL {
         return userProfile;
     }
 
+    public String getUserProfileAsJsonString(SocialNetwork socialNetwork){
+        String userProfile = null;
+        try{
+            userProfile = getProfileDataAsJsonString(socialNetwork);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return userProfile;
+    }
+
     public SocialData getSocialData(SocialNetwork socialNetwork){
         UserProfile userProfile = null;
         try{
@@ -144,8 +154,6 @@ public class SocialDataBL {
         }
         return userProfile.getSocialData();
     }
-
-
 
     //region Facebook
 
@@ -527,25 +535,88 @@ public class SocialDataBL {
     private UserProfile getProfileData(SocialNetwork socialNetwork) {
         UserProfile userProfile = new UserProfile();
 
-        Configuration config = configurationRepository.findByNameAndSocialNetworkId("UserProfile", socialNetwork.ordinal());
         try {
+            Configuration config = configurationRepository.findByNameAndSocialNetworkId("UserProfile", socialNetwork.ordinal());
             String json = null;
+            String url = null;
             for (Parameter param : config.getParameters()) {
                 if (param.getType().getName().equals("URL")) {
-                    json = userProfile(param.getValue(), socialNetwork);
+                    url = param.getValue();
                     break;
                 }
             }
-            if(json != null) {
-                userProfile = new ObjectMapper().readValue(json, UserProfile.class);
-                long userId = Long.valueOf(authenticationPrincipal.getAuthentication().getPrincipal().toString()).longValue();
-                UserProfile userProfileBase = this.userProfileRepository.findByUserIdAndSocialNetworkId(userId, socialNetwork.ordinal());
-                userProfile.setId(userProfileBase.getId());
-                userProfile.setToken(userProfileBase.getToken());
-                userProfile.setToken_secret(userProfileBase.getToken_secret());
-                userProfile.setUserId(userProfileBase.getUserId());
-                userProfile.setSocialData(userProfileBase.getSocialData());
-                userProfile.setSocialNetworkId(userProfileBase.getSocialNetworkId());
+
+            if(url != null){
+                for (Parameter param : config.getParameters()) {
+                    if (param.getType().getName().equals("URLField")) {
+                        url += param.getValue() + ',';
+                    }
+                }
+                if(url.substring(0, url.length() - 1).equals(",")){
+                    url = url.substring(0, url.length() - 1);
+                }
+                json = userProfile(url, socialNetwork);
+                if(json != null) {
+                      JSONObject allDataObject = new JSONObject(json);
+                      JSONObject profileObject = new JSONObject();
+                        for (Parameter param : config.getParameters()) {
+                            if (param.getType().getName().equals("Field")) {
+                                try {
+                                    String value = allDataObject.getString(param.getValue());
+                                    profileObject.put(param.getValue(), value);
+                                } catch (Exception ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
+                        }
+                }
+            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return userProfile;
+    }
+
+    private String getProfileDataAsJsonString(SocialNetwork socialNetwork) {
+        String userProfile = null;
+
+        try {
+            Configuration config = configurationRepository.findByNameAndSocialNetworkId("UserProfile", socialNetwork.ordinal());
+            String json = null;
+            String url = null;
+            for (Parameter param : config.getParameters()) {
+                if (param.getType().getName().equals("URL")) {
+                    url = param.getValue();
+                    break;
+                }
+            }
+
+            if(url != null){
+                for (Parameter param : config.getParameters()) {
+                    if (param.getType().getName().equals("URLField")) {
+                        url += param.getValue() + ',';
+                    }
+                }
+                if(url.substring(url.length() - 1, url.length()).equals(",")){
+                    url = url.substring(0, url.length() - 1);
+                }
+                json = userProfile(url, socialNetwork);
+                if(json != null) {
+                    JSONObject allDataObject = new JSONObject(json);
+                    JSONObject profileObject = new JSONObject();
+                    for (Parameter param : config.getParameters()) {
+                        if (param.getType().getName().equals("Field")) {
+                            try {
+                                String value = allDataObject.get(param.getValue()).toString();
+                                profileObject.put(param.getValue(), value);
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
+                        }
+                    }
+                    userProfile = profileObject.toString();
+                }
             }
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -616,9 +687,6 @@ public class SocialDataBL {
                     String responseBody = responseYoutube.toString();
                     return responseBody;
                 case TWITTER:
-                    String consumer_key = "cAZvSJcPSJoJFBCylBgCcO3H4";
-                    String consumer_secret = "VbHpDOo7L7qMdU5NaaK5LvyxCXcEGPrAzVrpUNtMaFNzfWZUHO";
-
                     String authorization = new OAuth1AuthorizationHeaderBuilder()
                             .withMethod("GET")
                             .withURL(configUrl)
@@ -628,24 +696,28 @@ public class SocialDataBL {
                             .withParameter("oauth_token", profile.getToken())
                             .withTokenSecret(profile.getToken_secret())
                             .build();
-                    HttpGet request = new HttpGet(configUrl);
-                    request.addHeader("Authorization", authorization);
-                    try (CloseableHttpResponse response2 = httpClient.execute(request)) {
+                    try {
+                        HttpGet request = new HttpGet(configUrl);
+                        request.addHeader("Authorization", authorization);
+                        try (CloseableHttpResponse response1 = httpClient.execute(request)) {
 
-                        // Get HttpResponse Status
-                        System.out.println(response2.getStatusLine().toString());
+                            // Get HttpResponse Status
+                            System.out.println(response1.getStatusLine().toString());
 
-                        HttpEntity entity = response2.getEntity();
-                        Header headers = entity.getContentType();
-                        System.out.println(headers);
+                            HttpEntity entity = response1.getEntity();
+                            Header headers = entity.getContentType();
+                            System.out.println(headers);
 
-                        if (entity != null) {
-                            // return it as a String
-                            String result = EntityUtils.toString(entity);
-                            System.out.println(result);
+                            if (entity != null) {
+                                // return it as a String
+                                String result = EntityUtils.toString(entity);
+                                System.out.println(result);
 
-                            String data = response2.toString();
-                            return result;
+                                String data = response1.toString();
+                                JSONArray posts = new JSONArray(result);
+                                return posts.getJSONObject(0).getJSONObject("user").toString();
+                            }
+
                         }
 
                     }

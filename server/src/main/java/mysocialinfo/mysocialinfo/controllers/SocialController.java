@@ -59,6 +59,11 @@ public class SocialController {
         return socialDataBL.getUserProfile(SocialNetwork.values()[socialNetwork]);
     }
 
+    @RequestMapping("/getUserProfileAsString")
+    public String getUserProfileAsString(int socialNetwork){
+        return socialDataBL.getUserProfileAsJsonString(SocialNetwork.values()[socialNetwork]);
+    }
+
     @RequestMapping("/getSocialData")
     public SocialData getSocialData(int socialNetwork){
         return socialDataBL.getSocialData(SocialNetwork.values()[socialNetwork]);

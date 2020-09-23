@@ -20,6 +20,7 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { RegisterComponent } from './core/components/register/register.component';
 import { UserProfilesComponent } from './core/components/user-profiles/user-profiles.component';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { UserProfilesComponent } from './core/components/user-profiles/user-prof
     ReactiveFormsModule,
     SharedMaterialModule,
     FlexLayoutModule,
+    NgxDatatableModule,
     NgxsModule.forRoot([AuthState], {developmentMode: !environment.production}),
     NgxsStoragePluginModule.forRoot(),
     NgxsLoggerPluginModule.forRoot({logger: console, collapsed: false, disabled: environment.production})
