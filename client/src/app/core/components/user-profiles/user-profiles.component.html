@@ -11,117 +11,43 @@
             <h4 style="color: #3B5998">
               Фејсбук
             </h4>
-            <ngx-datatable [rows]="facebookProfileValues">
-              <ngx-datatable-column name="Назив" prop="name">
-
-              </ngx-datatable-column>
-              <ngx-datatable-column name="Вредност" prop="value">
-
-              </ngx-datatable-column>
-            </ngx-datatable>
+            <form [formGroup]="formFacebook">
+              <ng-container *ngFor="let x of facebookProfileValues">
+                <mat-form-field class="full-width">
+                  <input matInput formControlName="screen_name" readonly
+                      placeholder={{x.name}} value={{x.value}}>
+                </mat-form-field>
+              </ng-container>
+            </form>
           </div>
           <div fxFlex="25" *ngIf="twitterProfileValues.length > 0">
-            <!-- <form [formGroup]="formTwitter"> -->
               <h4 style="color: #00ACEE">
                 Твитер
               </h4>
-              <ngx-datatable [rows]="twitterProfileValues">
-                <ngx-datatable-column name="Назив" prop="name">
-  
-                </ngx-datatable-column>
-                <ngx-datatable-column name="Вредност" prop="value">
-  
-                </ngx-datatable-column>
-              </ngx-datatable>
-              <!-- <div class="">
-                  <mat-form-field class="full-width">
-                      <input matInput formControlName="first_name"
-                          placeholder="Име">
-                  </mat-form-field>
-              </div>
-              <div class="">
-                <mat-form-field class="full-width">
-                    <input matInput formControlName="last_name" readonly
-                        placeholder="Презиме">
-                </mat-form-field>
-              </div>
-              <div class="">
-                <mat-form-field class="full-width">
-                    <input matInput formControlName="email" readonly
-                        placeholder="Адреса електронске поште">
-                </mat-form-field>
-              </div>
-              <div class="">
-                <mat-form-field class="full-width">
-                    <input matInput formControlName="location" readonly
-                        placeholder="Локација">
-                </mat-form-field>
-              </div>
-              <div class="">
-                <mat-form-field class="full-width">
-                    <input matInput formControlName="birthday" readonly
-                        placeholder="Рођендан">
-                </mat-form-field>
-              </div>
-              <div class="">
-                <mat-form-field class="full-width">
-                    <input matInput formControlName="screen_name" readonly
-                        placeholder="Надимак">
-                </mat-form-field>
-              </div>
-              </form> -->
+                <form [formGroup]="formFacebook">
+                  <ng-container *ngFor="let x of twitterProfileValues">
+                    <mat-form-field class="full-width">
+                      <input matInput formControlName="screen_name" readonly
+                          placeholder={{x.name}} value={{x.value}}>
+                    </mat-form-field>
+                  </ng-container>
+                </form>
           </div>
-          
-          <div fxFlex="25" *ngIf="youtubeProfileValues.length > 0">>
-            <!-- <form [formGroup]="formYoutube"> -->
+          <div fxFlex="25" *ngIf="youtubeProfileValues.length > 0">
               <h4 style="color: #FF0000">
                 Јутјуб
               </h4>
-              <ngx-datatable [rows]="youtubeProfileValues">
-                <ngx-datatable-column name="Назив" prop="name">
-  
-                </ngx-datatable-column>
-                <ngx-datatable-column name="Вредност" prop="value">
-  
-                </ngx-datatable-column>
-              </ngx-datatable>
-              <!-- <div class="">
-                  <mat-form-field class="full-width">
-                      <input matInput formControlName="first_name"
-                          placeholder="Име">
+              <div *ngIf="youtubeProfileValues.length > 0">
+                <form [formGroup]="formFacebook">
+                  <ng-container *ngFor="let x of youtubeProfileValues">
+                    <mat-form-field class="full-width">
+                      <input matInput formControlName="screen_name" readonly
+                          placeholder={{x.name}} value={{x.value}}>
+                    </mat-form-field>
+                  </ng-container>
                   </mat-form-field>
+                </form>
               </div>
-              <div class="">
-                <mat-form-field class="full-width">
-                    <input matInput formControlName="last_name" readonly
-                        placeholder="Презиме">
-                </mat-form-field>
-              </div>
-              <div class="">
-                <mat-form-field class="full-width">
-                    <input matInput formControlName="email" readonly
-                        placeholder="Адреса електронске поште">
-                </mat-form-field>
-              </div>
-              <div class="">
-                <mat-form-field class="full-width">
-                    <input matInput formControlName="location" readonly
-                        placeholder="Локација">
-                </mat-form-field>
-              </div>
-              <div class="">
-                <mat-form-field class="full-width">
-                    <input matInput formControlName="birthday" readonly
-                        placeholder="Рођендан">
-                </mat-form-field>
-              </div>
-              <div class="">
-                <mat-form-field class="full-width">
-                    <input matInput formControlName="screen_name" readonly
-                        placeholder="Надимак">
-                </mat-form-field>
-              </div>
-              </form> -->
           </div>
       </div>
 </div>
